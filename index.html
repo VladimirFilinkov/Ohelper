@@ -384,168 +384,121 @@
     <p>Пожалуйста, перезвоните позже.</p>
   </div>
 
-  <script>
-    let currentStep = 1;
-    let history = [];
+<script>
+  let currentStep = 1;
+  let history = [];
 
-    function toggleMenu() {
-      const menuDropdown = document.getElementById('menuDropdown');
-      if (menuDropdown.classList.contains('visible')) {
-        menuDropdown.classList.remove('visible');
-      } else {
-        menuDropdown.classList.add('visible');
-      }
+  function toggleMenu() {
+    const menuDropdown = document.getElementById('menuDropdown');
+    if (menuDropdown.classList.contains('visible')) {
+      menuDropdown.classList.remove('visible');
+    } else {
+      menuDropdown.classList.add('visible');
     }
+  }
 
-    function handleIdentify(isIdentified) {
-      const greetingElement = document.getElementById('greeting');
-      if (isIdentified) {
-        addHistory("Клиент идентифицирован.");
-        greetingElement.textContent = "Добрый день, ИМЯ, оператор Владимир. Чем я могу Вам помочь?";
-      } else {
-        addHistory("Клиент не идентифицирован.");
-        greetingElement.textContent = "Добрый день! Меня зовут Владимир, я оператор. Подскажите, как я могу к вам обращаться? Чем могу вам помочь?";
-      }
-      showStep(2);
+  // Обработчик клика вне меню
+  document.addEventListener('click', function(event) {
+    const menuDropdown = document.getElementById('menuDropdown');
+    const menuButton = document.querySelector('.menu-button');
+
+    if (
+      !menuDropdown.contains(event.target) &&
+      !menuButton.contains(event.target)
+    ) {
+      menuDropdown.classList.remove('visible');
     }
+  });
 
-    function nextStep(action) {
-      addHistory(action);
-      showStep(currentStep + 1);
+  function handleIdentify(isIdentified) {
+    const greetingElement = document.getElementById('greeting');
+    if (isIdentified) {
+      addHistory("Клиент идентифицирован.");
+      greetingElement.textContent = "Добрый день, ИМЯ, оператор Владимир. Чем я могу Вам помочь?";
+    } else {
+      addHistory("Клиент не идентифицирован.");
+      greetingElement.textContent = "Добрый день! Меня зовут Владимир, я оператор. Подскажите, как я могу к вам обращаться? Чем могу вам помочь?";
     }
+    showStep(2);
+  }
 
-    function confirmBooking(confirmed) {
-      if (confirmed) {
-        addHistory("Клиент согласился на бронирование.");
-        showStep(6); // Переход к проверке рецептурности
-      } else {
-        addHistory("Клиент отказался от бронирования.");
-        showStep(5); // Предложение повторить бронирование
-      }
-    }
-
-    function addArgument(checkbox) {
-      if (checkbox.checked) {
-        addHistory(`Аргумент: ${checkbox.nextElementSibling.textContent}`);
-      } else {
-        removeHistory(`Аргумент: ${checkbox.nextElementSibling.textContent}`);
-      }
-    }
-
-    function addHistory(message) {
-      history.push(message);
-      updateHistory();
-    }
-
-    function removeHistory(message) {
-      history = history.filter(item => item !== message);
-      updateHistory();
-    }
-
-    function updateHistory() {
-      const historyElement = document.getElementById('history');
-      historyElement.innerHTML = '';
-      history.forEach(item => {
-        const p = document.createElement('p');
-        p.textContent = item;
-        historyElement.appendChild(p);
-      });
-    }
-
-    function showStep(stepNumber) {
-      // Скрываем все шаги
-      document.querySelectorAll('.step').forEach(step => step.classList.add('hidden'));
-      // Показываем текущий шаг
-      document.getElementById(`step${stepNumber}`).classList.remove('hidden');
-      currentStep = stepNumber;
-    }
-
-    function resetAssistant() {
-      // Сбрасываем историю
-      history = [];
-      updateHistory();
-
-      // Скрываем все шаги и показываем первый
-      document.querySelectorAll('.step').forEach(step => step.classList.add('hidden'));
-      document.getElementById('step1').classList.remove('hidden');
-
-      // Сбрасываем текст приветствия
-      document.getElementById('greeting').textContent = '';
-
-      // Возвращаемся к первому шагу
-      currentStep = 1;
-    }
-
-    function openPopup() {
-      const popup = document.getElementById('popup');
-      const overlay = document.getElementById('popupOverlay');
-      popup.classList.add('active');
-      overlay.classList.add('active');
-    }
-
-    function closePopup() {
-      const popup = document.getElementById('popup');
-      const overlay = document.getElementById('popupOverlay');
-      popup.classList.remove('active');
-      overlay.classList.remove('active');
-    }
-
-    function handlePrescription(isPrescription) {
-      if (isPrescription) {
-        addHistory("Препарат рецептурный.");
-        showStep(7); // Информация о рецептурном препарате
-      } else {
-        addHistory("Препарат не рецептурный.");
-        showStep(8); // Предложение дополнительного товара
-      }
-    }
-
-    function handleNotification(type) {
-      const notificationMessage = document.getElementById('notificationMessage');
-      if (type === 'Бронь') {
-        notificationMessage.textContent = "В течение 15 минут вы получите уведомление о готовности заказа. Выкупить его нужно в течение 5 дней с момента оформления.";
-      } else if (type === 'Склад') {
-        notificationMessage.textContent = "Как только ваш заказ будет доставлен, на указанный номер придет SMS-уведомление. Выкупить заказ необходимо в течение 5 дней с момента его готовности.";
-      }
-      showStep(12);
-    }
-
-function handleMedicineInput() {
-    const medicineInput = document.getElementById('medicineInput').value.trim();
-    if (medicineInput === "") {
-      alert("Пожалуйста, введите название препарата.");
-      return;
-    }
-
-    // Разделяем введенный текст по символу новой строки
-    const medicines = medicineInput.split('\n').map(item => item.trim()).filter(item => item !== "");
-
-    if (medicines.length === 0) {
-      alert("Пожалуйста, введите хотя бы одно название препарата.");
-      return;
-    }
-
-    // Формируем строку с препаратами
-    const formattedMedicines = medicines.map(medicine => `- ${medicine}`).join("\n");
-
-    // Добавляем общий заголовок и список препаратов в историю
-    addHistory(`Клиенту нужен:\n${formattedMedicines}`);
-
+  function nextStep(action) {
+    addHistory(action);
     showStep(currentStep + 1);
   }
-  function showReason(reasonId) {
-  // Скрываем все подшаги
-  document.querySelectorAll('.reason').forEach(reason => reason.classList.add('hidden'));
 
-  // Показываем выбранный подшаг
-  if (reasonId === 'reason6') {
-    addHistory("Клиент согласился на бронирование.");
-    showStep(6); // Переход к шагу 6
-  } else {
-    document.getElementById(reasonId).classList.remove('hidden');
-
+  function confirmBooking(confirmed) {
+    if (confirmed) {
+      addHistory("Клиент согласился на бронирование.");
+      showStep(6); // Переход к проверке рецептурности
+    } else {
+      addHistory("Клиент отказался от бронирования.");
+      showStep(5); // Предложение повторить бронирование
+    }
   }
-}
-  </script>
+
+  function addArgument(checkbox) {
+    if (checkbox.checked) {
+      addHistory(`Аргумент: ${checkbox.nextElementSibling.textContent}`);
+    } else {
+      removeHistory(`Аргумент: ${checkbox.nextElementSibling.textContent}`);
+    }
+  }
+
+  function addHistory(message) {
+    history.push(message);
+    updateHistory();
+  }
+
+  function removeHistory(message) {
+    history = history.filter(item => item !== message);
+    updateHistory();
+  }
+
+  function updateHistory() {
+    const historyElement = document.getElementById('history');
+    historyElement.innerHTML = '';
+    history.forEach(item => {
+      const p = document.createElement('p');
+      p.textContent = item;
+      historyElement.appendChild(p);
+    });
+  }
+
+  function showStep(stepNumber) {
+    // Скрываем все шаги
+    document.querySelectorAll('.step').forEach(step => step.classList.add('hidden'));
+    // Показываем текущий шаг
+    document.getElementById(`step${stepNumber}`).classList.remove('hidden');
+    currentStep = stepNumber;
+  }
+
+  function resetAssistant() {
+    // Сбрасываем историю
+    history = [];
+    updateHistory();
+    // Скрываем все шаги и показываем первый
+    document.querySelectorAll('.step').forEach(step => step.classList.add('hidden'));
+    document.getElementById('step1').classList.remove('hidden');
+    // Сбрасываем текст приветствия
+    document.getElementById('greeting').textContent = '';
+    // Возвращаемся к первому шагу
+    currentStep = 1;
+  }
+
+  function openPopup() {
+    const popup = document.getElementById('popup');
+    const overlay = document.getElementById('popupOverlay');
+    popup.classList.add('active');
+    overlay.classList.add('active');
+  }
+
+  function closePopup() {
+    const popup = document.getElementById('popup');
+    const overlay = document.getElementById('popupOverlay');
+    popup.classList.remove('active');
+    overlay.classList.remove('active');
+  }
+</script>
 </body>
 </html>
