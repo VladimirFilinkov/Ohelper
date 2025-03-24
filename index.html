@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Помощник оператора v0.1</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f9;
+      color: #333;
+    }
+    .header {
+      background-color: #eaeaea;
+      padding: 5px 10px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .menu-button {
+      background: none;
+      border: none;
+      font-size: 16px;
+      cursor: pointer;
+      color: #555;
+    }
+    .menu-dropdown {
+      display: none; /* Скрываем по умолчанию */
+      position: absolute;
+      top: 40px;
+      right: 10px;
+      background-color: #fff;
+      border: 1px solid #ddd;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      z-index: 10;
+      width: 250px;
+      transition: opacity 0.3s ease, transform 0.3s ease; /* Плавная анимация */
+      opacity: 0;
+      transform: translateY(-10px); /* Начальное положение */
+    }
+    .menu-dropdown.visible {
+      display: block; /* Показываем при добавлении класса */
+      opacity: 1;
+      transform: translateY(0); /* Конечное положение */
+    }
+    .menu-dropdown a {
+      display: flex;
+      align-items: center;
+      padding: 10px;
+      text-decoration: none;
+      color: #555;
+      border-bottom: 1px solid #eee;
+    }
+    .menu-dropdown a:hover {
+      background-color: #f0f0f0;
+    }
+    .menu-dropdown a img {
+      width: 20px; /* Размер иконки */
+      height: 20px;
+      margin-right: 10px; /* Отступ между иконкой и текстом */
+    }
+    .container {
+      max-width: 600px; /* Ограничение ширины контента */
+      margin: 20px auto;
+      padding: 20px;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    h1 {
+      text-align: center;
+      color: #444;
+    }
+    button {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      background-color: #bbb;
+      color: #333;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    button:hover {
+      background-color: #999;
+    }
+    .hidden {
+      display: none;
+    }
+    .step {
+      margin-bottom: 20px;
+    }
+    .history {
+      background-color: #f9f9f9;
+      padding: 10px;
+      border-radius: 5px;
+      margin-bottom: 20px;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+      .history p {
+        margin: 5px 0;
+        font-size: 14px;
+        color: #555;
+        white-space: pre-wrap; /* Сохраняем переносы строк */
+      }
+
+.history p::before {
+  content: "✔️ ";
+  color: green;
+}
+    .checkbox-container {
+      margin-top: 10px;
+    }
+    .checkbox-container label {
+      display: block;
+      margin: 5px 0;
+      font-size: 14px;
+    }
+    .reset-button {
+      background-color: #ff4d4d;
+      color: white;
+    }
+    .reset-button:hover {
+      background-color: #cc0000;
+    }
+    /* Всплывающее окно */
+    .popup {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: #fff;
+      padding: 20px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      z-index: 1000;
+      width: 400px;
+      max-width: 90%;
+    }
+    .popup.active {
+      display: block;
+    }
+    .popup-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 999;
+    }
+    .popup-overlay.active {
+      display: block;
+    }
+    .popup-close {
+      float: right;
+      cursor: pointer;
+      font-size: 18px;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+  <!-- Header with Menu -->
+  <div class="header">
+    <button class="menu-button" onclick="toggleMenu()">☰ Меню</button>
+    <div id="menuDropdown" class="menu-dropdown">
+      <a href="https://gorzdrav.org/?asm=true" target="_blank"><img src="https://sun1-90.userapi.com/s/v1/ig2/XiWYl6D1voKItA2GWIzLmXdLK6VJgaq-YdCVRPldRA3_h6Sx2DLxWSKsxAFuYU3TRsNlO_9kDKufLwTgYSRCu8S0.jpg?size=894x894&quality=95&crop=2,0,894,894&ava=1" alt=""> Горздрав</a>
+      <a href="https://366.ru/?asm=true" target="_blank"><img src="https://consulting.1c.ru/upload/iblock/5a1/5knaxm3irwoutwl2pvedyyzy05px7hoa.png" alt=""> Аптека 36,6</a>
+      <a href="https://prod-backoffice.366.ru/backoffice/login.zul" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/SAP_2011_logo.svg/910px-SAP_2011_logo.svg.png" alt=""> SAP</a>
+      <a href="" target="_blank"><img src="https://rfrit.ru/media/documents/NAUMEN.jpg" alt=""> NAUMEN</a>
+      
+      <a href="https://docs.google.com/spreadsheets/d/1BW2ZHpyNqwN7oVafi7zqmcHEK37X0oNaRzIG2-EHIhI/edit?hl=ru&gid=0#gid=0" target="_blank"><img src="https://adm-leninskiy.ru/media/resized/tJB2cFjGS_2EWUqTUNRHXGZmecX3O0d4482K7FrGaQM/rs:fit:1024:768/aHR0cHM6Ly9hZG0t/bGVuaW5za2l5LnJ1/L21lZGlhL3Byb2pl/Y3RfbW9fMTg3L2Vh/L2U0LzM2LzcyLzc3/L2UwLzE5OS0xOTk2/NTkxX2ludGVybmF0/aW9uYWwtZXRhcGUt/YXNzdXJhbmNlLXJv/c2NvLXdpbmRvdy1n/b2JvLnBuZw.jpg" alt=""> Льготы, ПКУ</a>
+      <a href="https://app.weeek.net/s/document-document-NDQwNjkxfDlhOTAzOTU5LTlmMjUtNDg3Ni1iZjQyLTllZTNkOGI4NTA3NQ==" target="_blank"><img src="https://wallpapers.com/images/hd/graduation-cap-icon-o7wmwrg1xoxhf6nt.png" alt=""> База знаний</a>
+      <a href="#" onclick="openPopup()"><img src="https://avatars.mds.yandex.net/i?id=511b1f211e91447bae84db5d15eea58d_l-9234158-images-thumbs&n=13" alt=""> Тех. шоколадки</a>
+    
+    <hr>
+      <a href="https://dostavista.ru/cabinet" target="_blank"><img src="https://top-ex.ru/upload/medialibrary/27e/fg6h52ges4vnhiobr3rsvt5dcwo2tsrg.jpg" alt=""> Достависта</a>
+    <hr>   
+      <a href="https://intraservice.ru" target="_blank"><img src="https://www.lockheedmartin.com/content/dam/lockheed-martin/rms/photo/air5428/DataGuru_ICON-white-1.png" alt="">Интрасервис</a>
+      <a href="https://docs.google.com/spreadsheets/d/1UW66YkP7SI5tuCg_osMR8lFbN5sJttoKYibRIEIGKCY/edit?gid=1348048642" target="_blank"><img src="https://planetahost.ru/externimg/confog_vds_kvm/g.png" alt="">Маршрутизация</a>
+      <a href="https://docs.google.com/spreadsheets/d/1OMavqcow2fTcSYTgGVTGZ8Q_wEJ3C5JjYH-G3cwGpAs/edit?gid=2085446573" target="_blank"><img src="https://toppng.com/uploads/preview/gold-dollar-icon-png-11552724957octwx78gtj.png" alt="">Реестр бонусов</a>
+
+    <hr> 
+    <a href="https://telesaless.ru/login/index.php" onclick="openPopup()"> • Корпоративный портал</a>
+    <a href="https://telesales-service.ru/pamyatka_novichka" onclick="openPopup()"> • Памятка для адаптации</a>
+    <a href="https://t.me/TelesalesHelp_bot" onclick="openPopup()"> • Чат-бот Стёпа</a>
+    <a href="https://docs.google.com/document/d/1UCytOGgp_qWr5ziHY5mW37MWOPz2-mHf2jJWEYXQPP0/edit?tab=t.0" onclick="openPopup()"> • Алгоритм оформления</a>
+    <a href="https://docs.google.com/presentation/d/1jLyO-bvUDAmbF8hq1rS1IIxx8Cuy-9S06j5Za3mtWpM/edit?slide=id.g34218fa0317_0_148#slide=id.g34218fa0317_0_148" onclick="openPopup()"> • Памятка по аптекам</a>
+    <a href="https://docs.google.com/spreadsheets/d/17iW4gMFXH8YBPAchiZHzioq4L0fKP6o6Nawh2U9ZyDA/edit?copiedFromTrash=&pli=1&gid=484923479#gid=484923479" onclick="openPopup()"> • Отработка брони</a>
+<a href="https://docs.google.com/spreadsheets/d/1H5VTvjI9zzsN1baVF0keOXRUNpDNokK7Uaa6XyY5BiQ/edit?gid=0#gid=0" onclick="openPopup()"> • Чек-лист оценки</a>
+    </div>
+    <button class="reset-button" onclick="resetAssistant()">Новый диалог</button>
+  </div>
+  <!-- Content -->
+  <div class="content">
+    <div class="container">
+      <h1>Помощник оператора</h1>
+      <!-- История диалога -->
+      <div class="history" id="history"></div>
+      <!-- Шаг 1: Идентификация клиента -->
+      <div id="step1" class="step">
+        <p>Клиент позвонил. Определите, кто звонит:</p>
+        <button onclick="handleIdentify(true)">Клиент идентифицирован</button>
+        <button onclick="handleIdentify(false)">Неизвестный клиент</button>
+      </div>
+      <!-- Шаг 2: Приветствие -->
+      <div id="step2" class="step hidden">
+        <p id="greeting"></p>
+        <button onclick="nextStep('Чем могу помочь?')">Продолжить</button>
+      </div>
+      <!-- Шаг 3: Уточнение препарата -->
+      <div id="step3" class="step hidden">
+        <p>Какой препарат Вас интересует? (Введите список препаратов через Enter)</p>
+        <textarea id="medicineInput" placeholder="Введите название препарата" style="width: 100%; padding: 10px; margin-bottom: 10px; height: 100px;"></textarea>
+        <button onclick="handleMedicineInput()">Продолжить</button>
+      </div>
+      <!-- Шаг 4: Бронирование -->
+      <div id="step4" class="step hidden">
+        <p>Я могу бесплатно и быстро забронировать для Вас товар и зафиксировать выгодную онлайн-цену. Бронируем?</p>
+        <button onclick="confirmBooking(true)">Да</button>
+        <button onclick="confirmBooking(false)">Нет</button>
+      </div>
+<!-- Шаг 5: Отказ от бронирования -->
+<div id="step5" class="step hidden">
+  <p>Клиент отказался от бронирования. Уточните причину:</p>
+  <div id="reasonButtons">
+    <button onclick="showReason('reason1')">Нет, не нужно / Спасибо, мне не надо</button>
+    <button onclick="showReason('reason2')">Сам схожу, аптека рядом</button>
+    <button onclick="showReason('reason3')">Некогда, нет времени</button>
+    <button onclick="showReason('reason4')">Сам закажу в приложении</button>
+    <button onclick="showReason('reason5')">Не знаю, когда заберу / пойду</button>
+    <button onclick="showReason('reason6')" style="background-color: #4caf50; color: white;">Клиент согласен</button>
+  </div>
+
+  <!-- Подшаг 1: Нет, не нужно -->
+  <div id="reason1" class="reason hidden">
+    <p>Предложите следующие аргументы:</p>
+    <div class="checkbox-container">
+      <label><input type="checkbox" onclick="addArgument(this)"> Давайте я все-таки оформлю бронирование, это бесплатно и займет всего пару секунд. Так вы точно будете уверены, что товар будет ждать вас в магазине, а не исчезнет с полок.</label>
+      <label><input type="checkbox" onclick="addArgument(this)"> Ну раз это бесплатно и быстро, почему бы не подстраховаться? Вы ничем не рискуете, но точно получите нужный товар и по хорошей цене.</label>
+    </div>
+
+  </div>
+
+  <!-- Подшаг 2: Сам схожу, аптека рядом -->
+  <div id="reason2" class="reason hidden">
+    <p>Предложите следующие аргументы:</p>
+    <div class="checkbox-container">
+      <label><input type="checkbox" onclick="addArgument(this)"> Этот товар достаточно популярный, его могут быстро разобрать. Если забронируете, он точно будет вас ждать, а если нет — возможно, его уже не будет в наличии, когда вы приедете.</label>
+      <label><input type="checkbox" onclick="addArgument(this)"> Вы уверены, что хотите рисковать? Популярные товары могут исчезнуть за день-два. Забронируйте, чтобы точно не упустить шанс.</label>
+    </div>
+
+  </div>
+
+  <!-- Подшаг 3: Некогда, нет времени -->
+  <div id="reason3" class="reason hidden">
+    <p>Предложите следующие аргументы:</p>
+    <div class="checkbox-container">
+      <label><input type="checkbox" onclick="addArgument(this)"> Это займет всего пару минут, и вам не придется тратить время на поиски. Просто приходите и забираете свой заказ, без очередей и лишних вопросов.</label>
+      <label><input type="checkbox" onclick="addArgument(this)"> Оформляя бронирование, вы получаете приоритет. Мы гарантируем, что именно ваш заказ будет в наличии, даже если товар разберут к вашему приезду.</label>
+    </div>
+
+  </div>
+
+  <!-- Подшаг 4: Сам закажу в приложении -->
+  <div id="reason4" class="reason hidden">
+    <p>Предложите следующие аргументы:</p>
+    <div class="checkbox-container">
+      <label><input type="checkbox" onclick="addArgument(this)"> Бронирование поможет вам избежать неприятного сюрприза. Цена на сайте может отличаться от цены в магазине, а при бронировании вам гарантируется именно та стоимость, которую вы видите сейчас.</label>
+      <label><input type="checkbox" onclick="addArgument(this)"> Сейчас отличная цена, но она может измениться. Если оформить бронирование, вы зафиксируете стоимость, и даже если завтра товар подорожает, для вас цена останется прежней.</label>
+    </div>
+
+  </div>
+
+  <!-- Подшаг 5: Не знаю, когда заберу / пойду -->
+  <div id="reason5" class="reason hidden">
+    <p>Предложите следующие аргументы:</p>
+    <div class="checkbox-container">
+      <label><input type="checkbox" onclick="addArgument(this)"> Я хочу, чтобы вам было удобно. Если оформить бронь, вам не придется волноваться о наличии и цене — просто придете и заберете товар.</label>
+      <label><input type="checkbox" onclick="addArgument(this)"> Оформляя бронирование, вы получаете приоритет. Мы гарантируем, что именно ваш заказ будет в наличии, даже если товар разберут к вашему приезду.</label>
+    </div>
+
+  </div>
+
+  <!-- Подшаг 6: Клиент согласен -->
+  <div id="reason6" class="reason hidden">
+    <p>Клиент согласился на бронирование.</p>
+    <button onclick="nextStep('Переход к шагу 6')">Продолжить</button>
+  </div>
+</div>
+      <!-- Шаг 6: Проверка рецептурности -->
+      <div id="step6" class="step hidden">
+        <p>Препарат рецептурный?</p>
+        <button onclick="handlePrescription(true)">Да</button>
+        <button onclick="handlePrescription(false)">Нет</button>
+      </div>
+
+      <!-- Шаг 7: Информация о рецептурном препарате -->
+      <div id="step7" class="step hidden">
+        <p>Обращаем Ваше внимание, что ПРЕПАРАТ является рецептурным, в аптеке могут попросить рецепт.</p>
+        <button onclick="nextStep('Продолжить')">Продолжить</button>
+      </div>
+
+      <!-- Шаг 8: Предложение дополнительного товара -->
+      <div id="step8" class="step hidden">
+        <p><strong>Госздрав:</strong> Сейчас особенно важно заботиться о здоровье. Отличным дополнением к вашему заказу будет Аквалор Софт Дуо – мягкий спрей для промывания носа, который подходит и взрослым, и детям.<br>
+        Стоимость: 725 руб<br>
+        Объем: 150 мл<br>
+        Артикул: 70584 </p>
+
+        <p><strong>Аптека 36,6:</strong> Сейчас особенно важно заботиться о здоровье. Отличным дополнением к вашему заказу будет Аквалор Софт Дуо – мягкий спрей для промывания носа, который подходит и взрослым, и детям.<br>
+        Стоимость: 725 руб<br>
+        Объем: 150 мл<br>
+        Артикул: 70584 </p>
+
+        <p>Дополним заказ?</p>
+        <button onclick="nextStep('Предложили ТСМ')">Предложили ТСМ</button>
+      </div>
+
+      <!-- Шаг 9: Проверка заказа -->
+      <div id="step9" class="step hidden">
+        <p>Давайте проверим заказ:<br>
+        Мы оформляем заказ на (читаем препараты)<br>
+        Общая сумма составит...<br><br>
+        Заказ можно забрать по адресу:<br>
+        Аптека работает (график)<br><br>
+        Всё верно?</p>
+        <button onclick="nextStep('Сверка проведена')">Сверка проведена</button>
+      </div>
+
+      <!-- Шаг 10: Уведомление о невозможности возврата -->
+      <div id="step10" class="step hidden">
+        <p>Хочу обратить ваше внимание на то, что обмен и возврат товара надлежащего качества купленного в аптеке - невозможен.<br>
+        Обязательно перед оплатой проверьте еще раз название и дозировку препарата.<br>
+        Номер заказа придет вам в оповещении на указанный номер телефона.</p>
+        <button onclick="nextStep('Предупредили о возврате')">Предупредили о возврате</button>
+      </div>
+
+      <!-- Шаг 11: Информация об уведомлении -->
+      <div id="step11" class="step hidden">
+        <p>Бронь или склад?</p>
+        <button onclick="handleNotification('Бронь')">Бронь</button>
+        <button onclick="handleNotification('Склад')">Склад</button>
+      </div>
+
+      <!-- Шаг 12: Информация о готовности заказа -->
+      <div id="step12" class="step hidden">
+        <p id="notificationMessage"></p>
+        <button onclick="nextStep('Сказали про уведомление')">Сказали про уведомление</button>
+      </div>
+
+      <!-- Шаг 13: Завершение диалога -->
+      <div id="step13" class="step hidden">
+        <p>Скажите, у Вас остались вопросы?</p>
+        <button onclick="nextStep('Вопросов нет')">Вопросов нет</button>
+      </div>
+
+      <!-- Шаг 14: Оценка диалога -->
+      <div id="step14" class="step hidden">
+        <p>ИМЯ, пожалуйста оставайтесь на линии для оценки нашего диалога!<br>
+        Желаем здоровья!<br>
+        Всего доброго, до свидания!</p>
+        <button onclick="nextStep('Диалог завершен')">Диалог завершен</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Всплывающее окно -->
+  <div id="popupOverlay" class="popup-overlay"></div>
+  <div id="popup" class="popup">
+    <span class="popup-close" onclick="closePopup()">&times;</span>
+    <p>В настоящее время проводятся технические работы. </p>
+    <p>К сожалению, я не могу проверить информацию по вашему заказу, уточнить наличие препарата или помочь с оформлением. </p>
+    <p>Специалисты уже работают над устранением проблемы. Приносим извинения за неудобства. </p>
+    <p>Пожалуйста, перезвоните позже.</p>
+  </div>
+
+  <script>
+    let currentStep = 1;
+    let history = [];
+
+    function toggleMenu() {
+      const menuDropdown = document.getElementById('menuDropdown');
+      if (menuDropdown.classList.contains('visible')) {
+        menuDropdown.classList.remove('visible');
+      } else {
+        menuDropdown.classList.add('visible');
+      }
+    }
+
+    function handleIdentify(isIdentified) {
+      const greetingElement = document.getElementById('greeting');
+      if (isIdentified) {
+        addHistory("Клиент идентифицирован.");
+        greetingElement.textContent = "Добрый день, ИМЯ, оператор Владимир. Чем я могу Вам помочь?";
+      } else {
+        addHistory("Клиент не идентифицирован.");
+        greetingElement.textContent = "Добрый день! Меня зовут Владимир, я оператор. Подскажите, как я могу к вам обращаться? Чем могу вам помочь?";
+      }
+      showStep(2);
+    }
+
+    function nextStep(action) {
+      addHistory(action);
+      showStep(currentStep + 1);
+    }
+
+    function confirmBooking(confirmed) {
+      if (confirmed) {
+        addHistory("Клиент согласился на бронирование.");
+        showStep(6); // Переход к проверке рецептурности
+      } else {
+        addHistory("Клиент отказался от бронирования.");
+        showStep(5); // Предложение повторить бронирование
+      }
+    }
+
+    function addArgument(checkbox) {
+      if (checkbox.checked) {
+        addHistory(`Аргумент: ${checkbox.nextElementSibling.textContent}`);
+      } else {
+        removeHistory(`Аргумент: ${checkbox.nextElementSibling.textContent}`);
+      }
+    }
+
+    function addHistory(message) {
+      history.push(message);
+      updateHistory();
+    }
+
+    function removeHistory(message) {
+      history = history.filter(item => item !== message);
+      updateHistory();
+    }
+
+    function updateHistory() {
+      const historyElement = document.getElementById('history');
+      historyElement.innerHTML = '';
+      history.forEach(item => {
+        const p = document.createElement('p');
+        p.textContent = item;
+        historyElement.appendChild(p);
+      });
+    }
+
+    function showStep(stepNumber) {
+      // Скрываем все шаги
+      document.querySelectorAll('.step').forEach(step => step.classList.add('hidden'));
+      // Показываем текущий шаг
+      document.getElementById(`step${stepNumber}`).classList.remove('hidden');
+      currentStep = stepNumber;
+    }
+
+    function resetAssistant() {
+      // Сбрасываем историю
+      history = [];
+      updateHistory();
+
+      // Скрываем все шаги и показываем первый
+      document.querySelectorAll('.step').forEach(step => step.classList.add('hidden'));
+      document.getElementById('step1').classList.remove('hidden');
+
+      // Сбрасываем текст приветствия
+      document.getElementById('greeting').textContent = '';
+
+      // Возвращаемся к первому шагу
+      currentStep = 1;
+    }
+
+    function openPopup() {
+      const popup = document.getElementById('popup');
+      const overlay = document.getElementById('popupOverlay');
+      popup.classList.add('active');
+      overlay.classList.add('active');
+    }
+
+    function closePopup() {
+      const popup = document.getElementById('popup');
+      const overlay = document.getElementById('popupOverlay');
+      popup.classList.remove('active');
+      overlay.classList.remove('active');
+    }
+
+    function handlePrescription(isPrescription) {
+      if (isPrescription) {
+        addHistory("Препарат рецептурный.");
+        showStep(7); // Информация о рецептурном препарате
+      } else {
+        addHistory("Препарат не рецептурный.");
+        showStep(8); // Предложение дополнительного товара
+      }
+    }
+
+    function handleNotification(type) {
+      const notificationMessage = document.getElementById('notificationMessage');
+      if (type === 'Бронь') {
+        notificationMessage.textContent = "В течение 15 минут вы получите уведомление о готовности заказа. Выкупить его нужно в течение 5 дней с момента оформления.";
+      } else if (type === 'Склад') {
+        notificationMessage.textContent = "Как только ваш заказ будет доставлен, на указанный номер придет SMS-уведомление. Выкупить заказ необходимо в течение 5 дней с момента его готовности.";
+      }
+      showStep(12);
+    }
+
+function handleMedicineInput() {
+    const medicineInput = document.getElementById('medicineInput').value.trim();
+    if (medicineInput === "") {
+      alert("Пожалуйста, введите название препарата.");
+      return;
+    }
+
+    // Разделяем введенный текст по символу новой строки
+    const medicines = medicineInput.split('\n').map(item => item.trim()).filter(item => item !== "");
+
+    if (medicines.length === 0) {
+      alert("Пожалуйста, введите хотя бы одно название препарата.");
+      return;
+    }
+
+    // Формируем строку с препаратами
+    const formattedMedicines = medicines.map(medicine => `- ${medicine}`).join("\n");
+
+    // Добавляем общий заголовок и список препаратов в историю
+    addHistory(`Клиенту нужен:\n${formattedMedicines}`);
+
+    showStep(currentStep + 1);
+  }
+  function showReason(reasonId) {
+  // Скрываем все подшаги
+  document.querySelectorAll('.reason').forEach(reason => reason.classList.add('hidden'));
+
+  // Показываем выбранный подшаг
+  if (reasonId === 'reason6') {
+    addHistory("Клиент согласился на бронирование.");
+    showStep(6); // Переход к шагу 6
+  } else {
+    document.getElementById(reasonId).classList.remove('hidden');
+
+  }
+}
+  </script>
+</body>
+</html>
