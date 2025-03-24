@@ -166,10 +166,17 @@
       font-size: 18px;
       color: #555;
     }
+
+    .header-container {
+  max-width: 700px; /* Немного шире, чем основной контейнер */
+  margin: 0 auto; /* Центрирование по горизонтали */
+  padding: 0px 0; /* Отступы сверху и снизу */
+}
   </style>
 </head>
 <body>
   <!-- Header with Menu -->
+<div class="header-container">
   <div class="header">
     <button class="menu-button" onclick="toggleMenu()">☰ Меню</button>
     <div id="menuDropdown" class="menu-dropdown">
@@ -199,7 +206,8 @@
 <a href="https://docs.google.com/spreadsheets/d/1H5VTvjI9zzsN1baVF0keOXRUNpDNokK7Uaa6XyY5BiQ/edit?gid=0#gid=0" target="_blank"> • Чек-лист оценки</a>
     </div>
     <button class="reset-button" onclick="resetAssistant()">Новый  диалог</button>
-  </div>
+  </div></div>
+          <p align="center">Вся предоставленная на сайте информация носит информационный </br>характер и не является инструкцией для работы</p>
   <!-- Content -->
   <div class="content">
     <div class="container">
@@ -220,7 +228,7 @@
       <!-- Шаг 3: Уточнение препарата -->
       <div id="step3" class="step hidden">
         <p>Какой препарат Вас интересует? (Введите список препаратов через Enter)</p>
-        <textarea id="medicineInput" placeholder="Введите название препарата" style="width: 100%; padding: 10px; margin-bottom: 10px; height: 100px;"></textarea>
+        <textarea id="medicineInput" placeholder="Введите название препарата" style="width: 80%; padding: 10px; margin-bottom: 10px; height: 100px;"></textarea>
         <button onclick="handleMedicineInput()">Продолжить</button>
       </div>
       <!-- Шаг 4: Бронирование -->
@@ -499,6 +507,61 @@
     popup.classList.remove('active');
     overlay.classList.remove('active');
   }
+  function handleMedicineInput() {
+    const medicineInput = document.getElementById('medicineInput').value.trim();
+    if (medicineInput === "") {
+      alert("Пожалуйста, введите название препарата.");
+      return;
+    }
+
+    // Разделяем введенный текст по символу новой строки
+    const medicines = medicineInput.split('\n').map(item => item.trim()).filter(item => item !== "");
+
+    if (medicines.length === 0) {
+      alert("Пожалуйста, введите хотя бы одно название препарата.");
+      return;
+    }
+
+    // Формируем строку с препаратами
+    const formattedMedicines = medicines.map(medicine => `- ${medicine}`).join("\n");
+
+    // Добавляем общий заголовок и список препаратов в историю
+    addHistory(`Клиенту нужен:\n${formattedMedicines}`);
+
+    showStep(currentStep + 1);
+  }
+  function showReason(reasonId) {
+  // Скрываем все подшаги
+  document.querySelectorAll('.reason').forEach(reason => reason.classList.add('hidden'));
+
+  // Показываем выбранный подшаг
+  if (reasonId === 'reason6') {
+    addHistory("Клиент согласился на бронирование.");
+    showStep(6); // Переход к шагу 6
+  } else {
+    document.getElementById(reasonId).classList.remove('hidden');
+    
+  }
+}
+    function handlePrescription(isPrescription) {
+      if (isPrescription) {
+        addHistory("Препарат рецептурный.");
+        showStep(7); // Информация о рецептурном препарате
+      } else {
+        addHistory("Препарат не рецептурный.");
+        showStep(8); // Предложение дополнительного товара
+      }
+    }
+
+    function handleNotification(type) {
+      const notificationMessage = document.getElementById('notificationMessage');
+      if (type === 'Бронь') {
+        notificationMessage.textContent = "В течение 15 минут вы получите уведомление о готовности заказа. Выкупить его нужно в течение 5 дней с момента оформления.";
+      } else if (type === 'Склад') {
+        notificationMessage.textContent = "Как только ваш заказ будет доставлен, на указанный номер придет SMS-уведомление. Выкупить заказ необходимо в течение 5 дней с момента его готовности.";
+      }
+      showStep(12);
+    }
 </script>
 </body>
 </html>
