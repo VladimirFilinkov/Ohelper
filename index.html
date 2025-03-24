@@ -27,25 +27,26 @@
       cursor: pointer;
       color: #555;
     }
-    .menu-dropdown {
-      display: none; /* Скрываем по умолчанию */
-      position: absolute;
-      top: 40px;
-      right: 10px;
-      background-color: #fff;
-      border: 1px solid #ddd;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-      z-index: 10;
-      width: 250px;
-      transition: opacity 0.3s ease, transform 0.3s ease; /* Плавная анимация */
-      opacity: 0;
-      transform: translateY(-10px); /* Начальное положение */
-    }
-    .menu-dropdown.visible {
-      display: block; /* Показываем при добавлении класса */
-      opacity: 1;
-      transform: translateY(0); /* Конечное положение */
-    }
+.menu-dropdown {
+  display: none;
+  position: absolute;
+  top: 40px;
+  left: 10px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+  width: 250px;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  opacity: 0;
+  transform: translateX(-100%);
+}
+
+.menu-dropdown.visible {
+  display: block;
+  opacity: 1;
+  transform: translateX(0);
+}
     .menu-dropdown a {
       display: flex;
       align-items: center;
