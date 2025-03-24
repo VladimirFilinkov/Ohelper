@@ -172,6 +172,68 @@
   margin: 0 auto; /* Центрирование по горизонтали */
   padding: 0px 0; /* Отступы сверху и снизу */
 }
+/* Стиль для информационного сообщения */
+.info-message {
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  padding: 15px;
+  margin: 10px auto; /* Отступы сверху и снизу */
+  max-width: 600px; /* Ширина совпадает с основным контентом */
+  text-align: center; /* Выравнивание текста по центру */
+  position: relative; /* Для позиционирования крестика */
+  border-radius: 5px; /* Скругленные углы */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Тень для эффекта всплывания */
+}
+
+/* Стиль для текста внутри сообщения */
+.info-message p {
+  margin-top: 30px;
+  font-size: 14px;
+  color: #555;
+}
+
+/* Стиль для кнопки-крестика */
+.close-button {
+  position: absolute;
+  top: 5px;
+  right: 10px;
+  font-size: 40px;
+  cursor: pointer;
+  color: #aaa;
+}
+
+.close-button:hover {
+  color: #555;
+}
+
+/* Блок с кнопками */
+.button-grid {
+  display: flex;
+  justify-content: space-between; /* Кнопки равномерно распределены */
+  margin: 20px auto; /* Отступы сверху и снизу */
+  max-width: 600px; /* Ширина совпадает с основным контентом */
+}
+
+/* Стиль для кнопок */
+.grid-button {
+  flex: 1; /* Каждая кнопка занимает равное пространство */
+  margin: 0 5px; /* Отступы между кнопками */
+  padding: 20px; /* Внутренние отступы */
+  background-color: #4caf50; /* Цвет фона */
+  color: white; /* Цвет текста */
+  border: none; /* Убираем границы */
+  border-radius: 8px; /* Скругленные углы */
+  font-size: 14px; /* Размер текста */
+  font-style: bold;
+  cursor: pointer; /* Курсор "рука" */
+  text-align: center; /* Выравнивание текста по центру */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Тень для эффекта всплывания */
+  transition: background-color 0.3s ease; /* Плавное изменение цвета */
+}
+
+.grid-button:hover {
+  background-color: #45a049; /* Изменение цвета при наведении */
+}
   </style>
 </head>
 <body>
@@ -183,7 +245,7 @@
       <a href="https://gorzdrav.org/?asm=true" target="_blank"><img src="https://sun1-90.userapi.com/s/v1/ig2/XiWYl6D1voKItA2GWIzLmXdLK6VJgaq-YdCVRPldRA3_h6Sx2DLxWSKsxAFuYU3TRsNlO_9kDKufLwTgYSRCu8S0.jpg?size=894x894&quality=95&crop=2,0,894,894&ava=1" alt=""> Горздрав</a>
       <a href="https://366.ru/?asm=true" target="_blank"><img src="https://consulting.1c.ru/upload/iblock/5a1/5knaxm3irwoutwl2pvedyyzy05px7hoa.png" alt=""> Аптека 36,6</a>
       <a href="https://prod-backoffice.366.ru/backoffice/login.zul" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/SAP_2011_logo.svg/910px-SAP_2011_logo.svg.png" alt=""> SAP</a>
-      <a href="" target="_blank"><img src="https://rfrit.ru/media/documents/NAUMEN.jpg" alt=""> NAUMEN</a>
+      <a href="https://telesales-service.nau.team:8443/login" target="_blank"><img src="https://rfrit.ru/media/documents/NAUMEN.jpg" alt=""> NAUMEN</a>
       
       <a href="https://docs.google.com/spreadsheets/d/1BW2ZHpyNqwN7oVafi7zqmcHEK37X0oNaRzIG2-EHIhI/edit?hl=ru&gid=0#gid=0" target="_blank"><img src="https://adm-leninskiy.ru/media/resized/tJB2cFjGS_2EWUqTUNRHXGZmecX3O0d4482K7FrGaQM/rs:fit:1024:768/aHR0cHM6Ly9hZG0t/bGVuaW5za2l5LnJ1/L21lZGlhL3Byb2pl/Y3RfbW9fMTg3L2Vh/L2U0LzM2LzcyLzc3/L2UwLzE5OS0xOTk2/NTkxX2ludGVybmF0/aW9uYWwtZXRhcGUt/YXNzdXJhbmNlLXJv/c2NvLXdpbmRvdy1n/b2JvLnBuZw.jpg" alt=""> Льготы, ПКУ</a>
       <a href="https://app.weeek.net/s/document-document-NDQwNjkxfDlhOTAzOTU5LTlmMjUtNDg3Ni1iZjQyLTllZTNkOGI4NTA3NQ==" target="_blank"><img src="https://wallpapers.com/images/hd/graduation-cap-icon-o7wmwrg1xoxhf6nt.png" alt=""> База знаний</a>
@@ -207,8 +269,18 @@
     </div>
     <button class="reset-button" onclick="resetAssistant()">Новый  диалог</button>
   </div></div>
-          <p align="center">Вся предоставленная на сайте информация носит информационный </br>характер и не является инструкцией для работы</p>
+<div id="infoMessage" class="info-message">
+  <p>Вся предоставленная на сайте информация носит информационный характер и не является инструкцией для работы</p>
+  <span class="close-button" onclick="closeInfoMessage()">&times;</span>
+</div>
   <!-- Content -->
+  <!-- Блок с кнопками -->
+<div class="button-grid">
+  <button class="grid-button" onclick="startBookingDialog()">ОФОРМИТЬ<br>ЗАКАЗ</button>
+  <button class="grid-button">ВОПРОС<br>ПО ЗАКАЗУ</button>
+  <button class="grid-button">СОСТАВИТЬ<br>ОБРАЩЕНИЕ</button>
+  <button class="grid-button">ВОПРОС<br>ПО ДОСТАВКЕ</button>
+</div>
   <div class="content">
     <div class="container">
       <h1>Помощник оператора</h1>
@@ -562,6 +634,23 @@
       }
       showStep(12);
     }
+    function closeInfoMessage() {
+  const infoMessage = document.getElementById('infoMessage');
+  if (infoMessage) {
+    infoMessage.style.display = 'none'; // Скрываем сообщение
+  }
+}
+
+function startBookingDialog() {
+  // Очищаем историю и сбрасываем шаги
+  resetAssistant();
+
+  // Переходим к первому шагу (идентификация клиента)
+  showStep(1);
+
+  // Добавляем запись в историю
+  addHistory("Запущен диалог бронирования заказа.");
+}
 </script>
 </body>
 </html>
