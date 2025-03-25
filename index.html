@@ -273,13 +273,7 @@
   <span class="close-button" onclick="closeInfoMessage()">&times;</span>
 </div>
   <!-- Content -->
-  <!-- Блок с кнопками -->
-<div class="button-grid">
-  <button class="grid-button" onclick="startBookingDialog()">ОФОРМИТЬ<br>ЗАКАЗ</button>
-  <button class="grid-button">ВОПРОС<br>ПО ЗАКАЗУ</button>
-  <button class="grid-button">СОСТАВИТЬ<br>ОБРАЩЕНИЕ</button>
-  <button class="grid-button">ВОПРОС<br>ПО ДОСТАВКЕ</button>
-</div>
+
   <div class="content">
     <div class="container">
       <h1>Помощник оператора</h1>
@@ -287,30 +281,97 @@
       <div class="history" id="history"></div>
       <!-- Шаг 1: Идентификация клиента -->
       <div id="step1" class="step">
-        <p>Клиент позвонил. Определите, кто звонит:</p>
+        <p>ДИЛЬНЬ! ДИЛИНЬ!</p>
         <button onclick="handleIdentify(true)">Клиент идентифицирован</button>
         <button onclick="handleIdentify(false)">Неизвестный клиент</button>
       </div>
       <!-- Шаг 2: Приветствие -->
       <div id="step2" class="step hidden">
         <p id="greeting"></p>
-        <button onclick="nextStep('Чем могу помочь?')">Продолжить</button>
+        <button onclick="nextStep('Чем могу помочь?')">Посмотреть/заказать препарат</button>
+        <button onclick="">Вопрос по заказу (в разработке)</button>
+        <button onclick="">Составить обращение (в разработке)</button>
+        <button onclick="">Вопрос по доставке (в разработке)</button>
       </div>
       <!-- Шаг 3: Уточнение препарата -->
       <div id="step3" class="step hidden">
-        <p>Какой препарат Вас интересует? (Введите список препаратов через Enter)</p>
-        <textarea id="medicineInput" placeholder="Введите название препарата" style="width: 80%; padding: 10px; margin-bottom: 10px; height: 100px;"></textarea>
+        <p>(Не знаем препарат)<br>
+        <strong>ОП:</strong> Какой препарат Вас интересует? И в каком регионе посмотреть наличие?</p>
+        <p>(Уже знаем препарат)<br>
+        <strong>ОП:</strong> В каком регионе посмотреть наличие?</p>
+        <br>
+        <p style="font-size: 14px;">Уточняем: Дозировку, Форму выпуска, сколько штук/ампул, Кол-во упаковок, адерс</p>
+        <textarea id="medicineInput" placeholder=" Введите список через Enter" style="width: 80%; padding: 10px; margin-bottom: 10px; height: 100px;"></textarea>
         <button onclick="handleMedicineInput()">Продолжить</button>
       </div>
       <!-- Шаг 4: Бронирование -->
       <div id="step4" class="step hidden">
-        <p>Я могу бесплатно и быстро забронировать для Вас товар и зафиксировать выгодную онлайн-цену. Бронируем?</p>
+         <p><strong>ОП:</strong> ИМЯ, я могу бесплатно и быстро забронировать для Вас товар и зафиксировать выгодную онлайн-цену. Бронируем?</p>
+        <p>Не забываем:<br>
+        - Дозировка?<br>
+        - Форма выпуска?<br>
+        - Сколько штук/ампул?<br>
+        <br>
+
         <button onclick="confirmBooking(true)">Да</button>
         <button onclick="confirmBooking(false)">Нет</button>
       </div>
 <!-- Шаг 5: Отказ от бронирования -->
+
+
+  <!-- Подшаг 1: Нет, не нужно -->
+  <div id="reason1" class="reason hidden">
+    <p>Отрабатываем отказ:</p>
+    <div class="checkbox-container">
+      <label><input type="checkbox" onclick="addArgument(this)"> <strong>ОП:</strong> Подскажите, почему отказываетесь? <br>
+      Услуга абсолютно бесплатная и даёт Вам гарантию, что товар, действительно будет по заданой цене.</label>
+    </div>
+
+  </div>
+
+
+
+  <!-- Подшаг 2: Сам схожу, аптека рядом -->
+  <div id="reason2" class="reason hidden">
+    <p>Отрабатываем отказ:</p>
+    <div class="checkbox-container">
+      <label><input type="checkbox" onclick="addArgument(this)"> Без бронирования стоимость в аптеке может отличаться. <br>
+      Оформление займет не более 2-х минут, но это даст гарантию того, что вы выкупите препарат по указанной стоимости. </label>
+      <label><input type="checkbox" onclick="addArgument(this)">
+    Пока что товар в наличии есть, но его могут купить прямо сейчас, <br>давайте забронируем препарат что бы он остался в резерве за Вами?</label>
+    </div>
+
+  </div>
+
+  <!-- Подшаг 3: Некогда, нет времени -->
+  <div id="reason3" class="reason hidden">
+    <p>Отрабатываем отказ:</p>
+    <div class="checkbox-container">
+      <label><input type="checkbox" onclick="addArgument(this)"> Оформление занимает не более двух минут, но это даст уверенность, что препарат будет в наличии к вашему приходу, по заданной цене. Оформляем?</label>
+    </div>
+
+  </div>
+
+  <!-- Подшаг 4: Сам закажу в приложении -->
+  <div id="reason4" class="reason hidden">
+    <p>Отрабатываем отказ:</p>
+    <div class="checkbox-container">
+      <label><input type="checkbox" onclick="addArgument(this)"> Для того, чтобы вы не тратили свое время, мы можем забронировать препарат сейчас в звонке, это займет не более 2 минут. </label>
+    </div>
+
+  </div>
+
+  <!-- Подшаг 5: Не знаю, когда заберу / пойду -->
+  <div id="reason5" class="reason hidden">
+    <p>Отрабатываем отказ:</p>
+    <div class="checkbox-container">
+      <label><input type="checkbox" onclick="addArgument(this)"> Давайте сейчас забронируем в аптеке.... Заказ будет храниться в течение 5-ти дней. Воспользуетесь услугой?</label>
+    </div>
+
+  </div>
+
 <div id="step5" class="step hidden">
-  <p>Клиент отказался от бронирования. Уточните причину:</p>
+  <p>Причина отказа:</p>
   <div id="reasonButtons">
     <button onclick="showReason('reason1')">Нет, не нужно / Спасибо, мне не надо</button>
     <button onclick="showReason('reason2')">Сам схожу, аптека рядом</button>
@@ -318,56 +379,6 @@
     <button onclick="showReason('reason4')">Сам закажу в приложении</button>
     <button onclick="showReason('reason5')">Не знаю, когда заберу / пойду</button>
     <button onclick="showReason('reason6')" style="background-color: #4caf50; color: white;">Клиент согласен</button>
-  </div>
-
-  <!-- Подшаг 1: Нет, не нужно -->
-  <div id="reason1" class="reason hidden">
-    <p>Предложите следующие аргументы:</p>
-    <div class="checkbox-container">
-      <label><input type="checkbox" onclick="addArgument(this)"> Давайте я все-таки оформлю бронирование, это бесплатно и займет всего пару секунд. Так вы точно будете уверены, что товар будет ждать вас в магазине, а не исчезнет с полок.</label>
-      <label><input type="checkbox" onclick="addArgument(this)"> Ну раз это бесплатно и быстро, почему бы не подстраховаться? Вы ничем не рискуете, но точно получите нужный товар и по хорошей цене.</label>
-    </div>
-
-  </div>
-
-  <!-- Подшаг 2: Сам схожу, аптека рядом -->
-  <div id="reason2" class="reason hidden">
-    <p>Предложите следующие аргументы:</p>
-    <div class="checkbox-container">
-      <label><input type="checkbox" onclick="addArgument(this)"> Этот товар достаточно популярный, его могут быстро разобрать. Если забронируете, он точно будет вас ждать, а если нет — возможно, его уже не будет в наличии, когда вы приедете.</label>
-      <label><input type="checkbox" onclick="addArgument(this)"> Вы уверены, что хотите рисковать? Популярные товары могут исчезнуть за день-два. Забронируйте, чтобы точно не упустить шанс.</label>
-    </div>
-
-  </div>
-
-  <!-- Подшаг 3: Некогда, нет времени -->
-  <div id="reason3" class="reason hidden">
-    <p>Предложите следующие аргументы:</p>
-    <div class="checkbox-container">
-      <label><input type="checkbox" onclick="addArgument(this)"> Это займет всего пару минут, и вам не придется тратить время на поиски. Просто приходите и забираете свой заказ, без очередей и лишних вопросов.</label>
-      <label><input type="checkbox" onclick="addArgument(this)"> Оформляя бронирование, вы получаете приоритет. Мы гарантируем, что именно ваш заказ будет в наличии, даже если товар разберут к вашему приезду.</label>
-    </div>
-
-  </div>
-
-  <!-- Подшаг 4: Сам закажу в приложении -->
-  <div id="reason4" class="reason hidden">
-    <p>Предложите следующие аргументы:</p>
-    <div class="checkbox-container">
-      <label><input type="checkbox" onclick="addArgument(this)"> Бронирование поможет вам избежать неприятного сюрприза. Цена на сайте может отличаться от цены в магазине, а при бронировании вам гарантируется именно та стоимость, которую вы видите сейчас.</label>
-      <label><input type="checkbox" onclick="addArgument(this)"> Сейчас отличная цена, но она может измениться. Если оформить бронирование, вы зафиксируете стоимость, и даже если завтра товар подорожает, для вас цена останется прежней.</label>
-    </div>
-
-  </div>
-
-  <!-- Подшаг 5: Не знаю, когда заберу / пойду -->
-  <div id="reason5" class="reason hidden">
-    <p>Предложите следующие аргументы:</p>
-    <div class="checkbox-container">
-      <label><input type="checkbox" onclick="addArgument(this)"> Я хочу, чтобы вам было удобно. Если оформить бронь, вам не придется волноваться о наличии и цене — просто придете и заберете товар.</label>
-      <label><input type="checkbox" onclick="addArgument(this)"> Оформляя бронирование, вы получаете приоритет. Мы гарантируем, что именно ваш заказ будет в наличии, даже если товар разберут к вашему приезду.</label>
-    </div>
-
   </div>
 
   <!-- Подшаг 6: Клиент согласен -->
@@ -378,7 +389,8 @@
 </div>
       <!-- Шаг 6: Проверка рецептурности -->
       <div id="step6" class="step hidden">
-        <p>Препарат рецептурный?</p>
+        <p>Обрабатываем заказ клиента, проводим сверку</p><br>
+        <p>В заказе есть рецептурный препарат?</p>
         <button onclick="handlePrescription(true)">Да</button>
         <button onclick="handlePrescription(false)">Нет</button>
       </div>
@@ -392,33 +404,32 @@
       <!-- Шаг 8: Предложение дополнительного товара -->
       <div id="step8" class="step hidden">
         <p><strong>Госздрав:</strong> Сейчас особенно важно заботиться о здоровье. Отличным дополнением к вашему заказу будет Аквалор Софт Дуо – мягкий спрей для промывания носа, который подходит и взрослым, и детям.<br>
-        Стоимость: 725 руб<br>
         Объем: 150 мл<br>
         Артикул: 70584 </p>
 
         <p><strong>Аптека 36,6:</strong> Сейчас особенно важно заботиться о здоровье. Отличным дополнением к вашему заказу будет Аквалор Софт Дуо – мягкий спрей для промывания носа, который подходит и взрослым, и детям.<br>
-        Стоимость: 725 руб<br>
         Объем: 150 мл<br>
         Артикул: 70584 </p>
 
-        <p>Дополним заказ?</p>
+        <p><strong>ОП:</strong> Дополним заказ?</p>
         <button onclick="nextStep('Предложили ТСМ')">Предложили ТСМ</button>
       </div>
 
       <!-- Шаг 9: Проверка заказа -->
       <div id="step9" class="step hidden">
-        <p>Давайте проверим заказ:<br>
+        <p><strong>ОП:</strong> Давайте проверим заказ:<br>
         Мы оформляем заказ на (читаем препараты)<br>
         Общая сумма составит...<br><br>
+        Всё верно?<br><br>
         Заказ можно забрать по адресу:<br>
         Аптека работает (график)<br><br>
-        Всё верно?</p>
+        </p>
         <button onclick="nextStep('Сверка проведена')">Сверка проведена</button>
       </div>
 
       <!-- Шаг 10: Уведомление о невозможности возврата -->
       <div id="step10" class="step hidden">
-        <p>Хочу обратить ваше внимание на то, что обмен и возврат товара надлежащего качества купленного в аптеке - невозможен.<br>
+        <p><strong>ОП:</strong> Хочу обратить ваше внимание на то, что обмен и возврат товара надлежащего качества купленного в аптеке - невозможен.<br>
         Обязательно перед оплатой проверьте еще раз название и дозировку препарата.<br>
         Номер заказа придет вам в оповещении на указанный номер телефона.</p>
         <button onclick="nextStep('Предупредили о возврате')">Предупредили о возврате</button>
@@ -445,7 +456,7 @@
 
       <!-- Шаг 14: Оценка диалога -->
       <div id="step14" class="step hidden">
-        <p>ИМЯ, пожалуйста оставайтесь на линии для оценки нашего диалога!<br>
+        <p><strong>ОП:</strong> ИМЯ, пожалуйста оставайтесь на линии для оценки нашего диалога!<br>
         Желаем здоровья!<br>
         Всего доброго, до свидания!</p>
         <button onclick="nextStep('Диалог завершен')">Диалог завершен</button>
@@ -457,7 +468,7 @@
   <div id="popupOverlay" class="popup-overlay"></div>
   <div id="popup" class="popup">
     <span class="popup-close" onclick="closePopup()">&times;</span>
-    <p>В настоящее время проводятся технические работы. </p>
+    <p><strong>ОП:</strong> В настоящее время проводятся технические работы. </p>
     <p>К сожалению, я не могу проверить информацию по вашему заказу, уточнить наличие препарата или помочь с оформлением. </p>
     <p>Специалисты уже работают над устранением проблемы. Приносим извинения за неудобства. </p>
     <p>Пожалуйста, перезвоните позже.</p>
@@ -489,17 +500,22 @@
     }
   });
 
-  function handleIdentify(isIdentified) {
-    const greetingElement = document.getElementById('greeting');
-    if (isIdentified) {
-      addHistory("Клиент идентифицирован.");
-      greetingElement.textContent = "Добрый день, ИМЯ, оператор Владимир. Чем я могу Вам помочь?";
-    } else {
-      addHistory("Клиент не идентифицирован.");
-      greetingElement.textContent = "Добрый день! Меня зовут Владимир, я оператор. Подскажите, как я могу к вам обращаться? Чем могу вам помочь?";
-    }
-    showStep(2);
+function handleIdentify(isIdentified) {
+  const greetingElement = document.getElementById('greeting');
+  if (isIdentified) {
+    addHistory("Клиент идентифицирован.");
+    greetingElement.textContent = "ОП: Здравствуйте, ИМЯ, оператор Владимир. Чем я могу Вам помочь?";
+  } else {
+    addHistory("Клиент не идентифицирован.");
+    greetingElement.innerHTML = `
+      <strong>ОП:</strong> Здравствуйте! Оператор Владимир.<br>
+      Подскажите, как я могу к вам обращаться?<br><br>
+      - Клиент представляется<br><br>
+      <strong>ОП:</strong> Приятно познакомиться, ИМЯ! Чем могу вам помочь?
+    `;
   }
+  showStep(2);
+}
 
   function nextStep(action) {
     addHistory(action);
@@ -516,13 +532,6 @@
     }
   }
 
-  function addArgument(checkbox) {
-    if (checkbox.checked) {
-      addHistory(`Аргумент: ${checkbox.nextElementSibling.textContent}`);
-    } else {
-      removeHistory(`Аргумент: ${checkbox.nextElementSibling.textContent}`);
-    }
-  }
 
   function addHistory(message) {
     history.push(message);
