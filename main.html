@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Доступ к сервисам</title>
+  <script src="https://cdn.jsdelivr.net/npm/crypto-js@4.1.1/crypto-js.min.js"></script>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #f5f5f5;
+      padding: 30px;
+      text-align: center;
+    }
+
+    .card {
+  display: none;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  padding: 20px;
+  max-width: 500px;
+  margin: 30px auto;
+  text-align: left;
+  font-size: 16px;
+}
+
+.field {
+  margin-bottom: 16px;
+}
+
+.label {
+  display: block;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 4px;
+}
+
+.link-group {
+  margin-left: 10px;
+}
+
+.field.inline {
+  width: 380px;
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.field.inline .label {
+  width: 80px; /* фиксированная ширина */
+  font-weight: bold;
+  color: #444;
+}
+
+.field.inline .value {
+  flex: 1;
+  text-align: left;
+  background: #eef;
+  padding: 4px 6px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.field.inline .value:hover {
+  background: #dde; /* эффект при наведении */
+}
+
+a {
+    color: #3366cc; 
+    text-decoration: none; 
+}
+
+a:hover {
+  color: #1a53a0; 
+  text-decoration: underline;
+}
+
+.value {
+  background: #eef;
+  padding: 4px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: inline-block;
+  margin-top: 4px;
+}
+
+.value:hover {
+  background: #dde;
+}
+
+    input[type="password"] {
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #aaa;
+      width: 200px;
+      margin-right: 10px;
+    }
+
+    button {
+    background-color: #3366cc; 
+    color: white;               
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    }
+
+  button:hover {
+    background-color: #1a53a0;
+  }
+
+    #message {
+      color: red;
+      margin-top: 10px;
+    }
+.menu {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 30px;
+  margin-bottom: 20px;
+}
+
+.menu-btn {
+  all: unset; /* Удаляет все базовые стили (в том числе цвет и подчёркивание) */
+  display: inline-block;
+  padding: 12px 24px;
+  font-size: 16px;
+  font-weight: bold;
+  color: white;
+  background-color: #4CAF50;
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.menu-btn:hover {
+  background-color: #45a049;
+}
+
+.menu-btn:active {
+  transform: scale(0.98);
+}
+  </style>
+</head>
+<body>
+<div class="menu">
+  <form action="https://vk.com/groups">
+    <button class="menu-btn" type="submit">Помощник голос</button>
+  </form>
+  <form action="https://vk.com/groups">
+    <button class="menu-btn" type="submit">Помощник чаты</button>
+  </form>
+</div>
+<h2>🔐 Введите код доступа</h2>
+<input type="password" id="key" placeholder="Введите код" />
+<button onclick="decrypt()">Показать</button>
+<div id="message"></div>
+
+<div class="card" id="card">
+  <!-- Первая карточка -->
+  <h3>💊 АПТЕКИ</h3>
+  <hr>
+  <div class="field">
+    <span class="label" align="center">ASM новый</span>
+    <hr>
+    <div class="link-group">
+      <div><a id="siteLink1" href="#" target="_blank">карточка</a></div>
+      <div class="label"><strong>ГЗ:  </strong> <a href="https://prod-front.gorzdrav.org/?asm=true" target="_blank"> prod-front.gorzdrav.org</a></div>
+      <div class="label"><strong>366:</strong> <a href="https://prod-front.366.ru/?asm=true" target="_blank">prod-front.366.ru</a></div>
+    </div>
+  </div>
+<div class="field inline">
+  <span class="label">Логин:</span>
+  <span class="value" title="Скопировать" onclick="copyToClipboard(this)">•••••••</span>
+</div>
+<div class="field inline">
+  <span class="label">Пароль:</span>
+  <span class="value" title="Скопировать" onclick="copyToClipboard(this)">•••••••</span>
+</div>
+  <!-- карточка 2 -->
+  <hr>
+  <div class="field">
+      <span class="label" align="center">SAP старый</span>
+    <hr>
+    <div class="link-group">
+      <div><a id="siteLink2" href="#" target="_blank"></a></div>
+      <div class="label"><strong></strong> <a href="https://prod-backoffice.366.ru/backoffice/login.zul" target="_blank">prod-backoffice.366.ru</a></div>
+    </div>
+  </div>
+<div class="field inline">
+  <span class="label">Логин:</span>
+  <span class="value" title="Скопировать" onclick="copyToClipboard(this)">•••••••</span>
+</div>
+<div class="field inline">
+  <span class="label">Пароль:</span>
+  <span class="value" title="Скопировать" onclick="copyToClipboard(this)">•••••••</span>
+</div>
+  <!-- карточка 3 -->
+  <hr>
+  <div class="field">
+      <span class="label" align="center">SAP новый</span>
+    <hr>
+    <div class="link-group">
+      <div><a id="siteLink3" href="#" target="_blank"></a></div>
+      <div class="label"><strong></strong> <a href="https://flex-prod-backoffice.366.ru" target="_blank">flex-prod-backoffice.366.ru</a></div>
+    </div>
+  </div>
+<div class="field inline">
+  <span class="label">Логин:</span>
+  <span class="value" title="Скопировать" onclick="copyToClipboard(this)">•••••••</span>
+</div>
+<div class="field inline">
+  <span class="label">Пароль:</span>
+  <span class="value" title="Скопировать" onclick="copyToClipboard(this)">•••••••</span>
+</div>
+  <!-- карточка 4 -->
+  <hr>
+  <div class="field">
+      <span class="label" align="center">IntraService</span>
+    <hr>
+    <div class="link-group">
+      <div><a id="siteLink4" href="#" target="_blank"></a></div>
+      <div class="label"><strong></strong> <a href="https://sd.366.ru/Task" target="_blank">sd.366.ru</a></div>
+    </div>
+  </div>
+<div class="field inline">
+  <span class="label">Логин:</span>
+  <span class="value" title="Скопировать" onclick="copyToClipboard(this)">•••••••</span>
+</div>
+<div class="field inline">
+  <span class="label">Пароль:</span>
+  <span class="value" title="Скопировать" onclick="copyToClipboard(this)">•••••••</span>
+</div>
+  <!-- карточка 5 -->
+  <hr>
+  <div class="field">
+      <span class="label" align="center">Золотая Корона</span>
+    <hr>
+    <div class="link-group">
+      <div><a id="siteLink5" href="#" target="_blank"></a></div>
+      <div class="label"><strong></strong> <a href="https://bonus.korona.net/webarm/app/Application.jsp" target="_blank">bonus.korona.net</a></div>
+    </div>
+  </div>
+<div class="field inline">
+  <span class="label">Логин:</span>
+  <span class="value" title="Скопировать" onclick="copyToClipboard(this)">•••••••</span>
+</div>
+<div class="field inline">
+  <span class="label">Пароль:</span>
+  <span class="value" title="Скопировать" onclick="copyToClipboard(this)">•••••••</span>
+</div>
+  <!-- карточка 6 -->
+  <hr>
+  <div class="field">
+      <span class="label" align="center">Достависта</span>
+    <hr>
+    <div class="link-group">
+      <div><a id="siteLink6" href="#" target="_blank"></a></div>
+      <div class="label"><strong></strong> <a href="https://dostavista.ru/cabinet" target="_blank">dostavista.ru</a></div>
+    </div>
+  </div>
+<div class="field inline">
+  <span class="label">Логин:</span>
+  <span class="value" title="Скопировать" onclick="copyToClipboard(this)">•••••••</span>
+</div>
+<div class="field inline">
+  <span class="label">Пароль:</span>
+  <span class="value" title="Скопировать" onclick="copyToClipboard(this)">•••••••</span>
+</div>
+  <!-- карточка 7 -->
+  <hr>
+  <div class="field">
+      <span class="label" align="center">Naumen</span>
+    <hr>
+    <div class="link-group">
+      <div><a id="siteLink7" href="#" target="_blank"></a></div>
+      <div class="label"><strong></strong> <a href="https://telesales-service.nau.team:8443/login" target="_blank">telesales-service.nau.team</a></div>
+    </div>
+  </div>
+<div class="field inline">
+  <span class="label">Логин:</span>
+  <span class="value" title="Скопировать" onclick="copyToClipboard(this)">•••••••</span>
+</div>
+<div class="field inline">
+  <span class="label">Пароль:</span>
+  <span class="value" title="Скопировать" onclick="copyToClipboard(this)">•••••••</span>
+</div>
+  <!-- карточка 8 -->
+  <hr>
+  <div class="field">
+      <span class="label" align="center">jivosite</span>
+    <hr>
+    <div class="link-group">
+      <div><a id="siteLink7" href="#" target="_blank"></a></div>
+      <div class="label"><strong></strong> <a href="https://app.jivosite.com/login" target="_blank">jivosite.com</a></div>
+    </div>
+  </div>
+<div class="field inline">
+  <span class="label">Логин:</span>
+  <span class="value" title="Скопировать" onclick="copyToClipboard(this)">•••••••</span>
+</div>
+<div class="field inline">
+  <span class="label">Пароль:</span>
+  <span class="value" title="Скопировать" onclick="copyToClipboard(this)">•••••••</span>
+</div>
+  <!-- карточка -->
+</div>
+<script>
+function copyToClipboard(el) {
+  const text = el.textContent;
+  navigator.clipboard.writeText(text)
+    .catch(err => alert("Ошибка копирования"));
+}
+</script>
+<script>
+  // 🔐 Зашифрованный JSON с логином, паролем и ссылкой
+  const encryptedData = "U2FsdGVkX1/iCs4c+HBkdM2w+UV0k9VIFfxqmzf7r7IthxDLj2EI2USEKb1r4pYXAg+1XSia8PeX7LhY0jMt+VMdVl9bgJZMLAPXB6OceOLyIsv1YWpscr9i6fSTjTawhrFfiP3qgzDUSQl5aG9Yj/cc2ELHFh+DyyvzwhRnYH/gcdzYiqy+THTC50Z+f+ija/BKN84CYsKR+WSVcbQENBynKY+DXCYVOvk6aJTutQt8ohx0WRyPMRi4/x33/bKsrPtzRWhBzX83VdW4CQoPltHv3sWoSodkYnrqgcsq01CmiAUNlNM5TvyEPLvKKKp5q9E3pBNjBeCd+8fW/ryIBayufHUr2RxUr0WkXIXWx1qz/jE15XOpoXCxBw7UcT4cYeV++gAdJZVKW/w7d70rgFbH7IBb7ZcH0v5Gf5JkbmdO7hSyXFknW32S9oSrwd/YkKIah6O8yaqymPCLQSy2rMeIhCHpwCsqYJddYJxKK3YMbhHJqjhUhYwK4oalZWGROpVmyxmPIys5qZxRuzhO4eF4QeX5RyyQ7QmyxVo5k5zeULUXh/Qc9cACy8a22vyy5TSlTyJvMR2oCLymP3/3CRVESxZ5CZVOM/6spN2O7jhwQP6DlE5bIXeIC3F+tESCTozlRdtlCSlbaAkqaPXZ1VFsZysXWSP34EyQDCWDQa9eaJYliNx4PXBSd1LSZxxPcfnwEXjsuKNoLzpV7KSLkqktM+/B6yIaas0lAOtgQ9V8jdmMJio/0N1bLbxcBOoYdoXgxwqP+L8yzpX2DMdlGHRvC4NJO2hLORZOwJTtuok=";
+
+function decrypt() {
+  const key = document.getElementById("key").value;
+  const decrypted = CryptoJS.AES.decrypt(encryptedData, key);
+  const plainText = decrypted.toString(CryptoJS.enc.Utf8);
+
+  if (!plainText) {
+    document.getElementById("message").innerText = "❌ Неверный код доступа!";
+    return;
+  }
+
+  try {
+    const data = JSON.parse(plainText);
+    const values = document.querySelectorAll(".value");
+    const links = document.querySelectorAll("[id^='siteLink']");
+
+    data.services.forEach((service, index) => {
+      // Устанавливаем ссылку
+      if (links[index]) {
+        links[index].href = service.link;
+        links[index].textContent = service.link;
+      }
+
+      // Устанавливаем логин и пароль
+      if (values[index * 2]) {
+        values[index * 2].textContent = service.login;
+      }
+      if (values[index * 2 + 1]) {
+        values[index * 2 + 1].textContent = service.password;
+      }
+    });
+
+    document.getElementById("card").style.display = "block";
+    document.getElementById("message").innerText = "";
+  } catch (e) {
+    document.getElementById("message").innerText = "⚠️ Ошибка при расшифровке.";
+  }
+}
+</script>
+
+</body>
+</html>

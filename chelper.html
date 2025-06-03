@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Шпаргалка</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+        }
+        .spoiler {
+            margin-bottom: 15px;
+        }
+        .spoiler-header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 10px;
+            cursor: pointer;
+            border-radius: 5px;
+            text-align: center;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+        .spoiler-header:hover {
+            background-color: #34495e;
+        }
+        .spoiler-content {
+            display: none;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #fff;
+            margin-top: 5px;
+        }
+        .phrase {
+            position: relative;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+            background-color: #ecf0f1;
+            transition: background-color 0.3s ease;
+        }
+        .phrase:hover {
+            background-color: #dfe6e9;
+        }
+        .tooltip {
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #2c3e50;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 3px;
+            font-size: 12px;
+            display: none;
+            white-space: nowrap;
+        }
+        .phrase:hover .tooltip {
+            display: block;
+        }
+        .editable {
+            color: #2980b9;
+            cursor: pointer;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Шпаргалка для работы</h1>
+
+<div class="spoiler">
+    <div class="spoiler-header">Приветствие</div>
+    <div class="spoiler-content">
+        <div class="phrase" onclick="copyPhrase(this)">
+            Здравствуйте, меня зовут <span class="editable" onclick="makeEditable(event, this)">Х</span>. Чем могу помочь?
+            <span class="tooltip">Скопировать</span>
+        </div>
+    </div>
+</div>
+
+<div class="spoiler">
+    <div class="spoiler-header">Ожидание</div>
+    <div class="spoiler-content">
+        <div class="phrase" onclick="copyPhrase(this)">
+            Уточняю информацию. Пожалуйста, ожидайте.
+            <span class="tooltip">Скопировать</span>
+        </div>
+        <div class="phrase" onclick="copyPhrase(this)">
+            Занимаюсь вашим вопросом. Пожалуйста, ожидайте.
+            <span class="tooltip">Скопировать</span>
+        </div>
+        <div class="phrase" onclick="copyPhrase(this)">
+            Проверяю наличие. Пожалуйста, ожидайте.
+            <span class="tooltip">Скопировать</span>
+        </div>
+        <div class="phrase" onclick="copyPhrase(this)">
+            Составляю обращение. Пожалуйста, ожидайте.
+            <span class="tooltip">Скопировать</span>
+        </div>
+    </div>
+</div>
+
+<div class="spoiler">
+    <div class="spoiler-header">Наличие и бронирование</div>
+    <div class="spoiler-content">
+        <div class="phrase" onclick="copyPhrase(this)">
+            Спасибо за ожидание. Препарат <span class="editable" onclick="makeEditable(event, this)">Х</span> по цене <span class="editable" onclick="makeEditable(event, this)">Х</span> есть в наличии по адресу <span class="editable" onclick="makeEditable(event, this)">Х</span>. Забронировать для вас? Без бронирования цена в аптеке может отличаться.
+            <span class="tooltip">Скопировать</span>
+        </div>
+        <div class="phrase" onclick="copyPhrase(this)">
+            Ваш заказ оформлен с доставкой со склада. Средний срок доставки заказов со склада 1-3 дня. Как только заказ доставят в аптеку, Вам придёт уведомление о готовности.
+            <span class="tooltip">Скопировать</span>
+        </div>
+        <div class="phrase" onclick="copyPhrase(this)">
+            Ближайшая аптека, где можем оформить заказ сегодня - <span class="editable" onclick="makeEditable(event, this)">Х</span>, согласны?
+            <span class="tooltip">Скопировать</span>
+        </div>
+        <div class="phrase" onclick="copyPhrase(this)">
+            К сожалению, этого препарата сейчас нет в наличии в сети аптек Горздрав и 36,6. Ассортимент регулярно пополняется. Вы можете отслеживать наличие препарата самостоятельно или обратиться к нам.
+            <span class="tooltip">Скопировать</span>
+        </div>
+        <div class="phrase" onclick="copyPhrase(this)">
+            Могу предложить препарат-синоним с тем же действующим веществом - <span class="editable" onclick="makeEditable(event, this)">Х</span>. Согласны?
+            <span class="tooltip">Скопировать</span>
+        </div>
+    </div>
+</div>
+
+<div class="spoiler">
+    <div class="spoiler-header">Обращения и технические работы</div>
+    <div class="spoiler-content">
+        <div class="phrase" onclick="copyPhrase(this)">
+            Спасибо за ожидание. Создала обращение <span class="editable" onclick="makeEditable(event, this)">Х</span>. Как только заявка будет рассмотрена, с вами обязательно свяжутся по решению по указанному номеру телефона. От лица компании приношу искренние извинения за то, что Вам пришлось столкнуться с данной ситуацией.
+            <span class="tooltip">Скопировать</span>
+        </div>
+        <div class="phrase" onclick="copyPhrase(this)">
+            К сожалению, в настоящее время ведутся технические работы, у меня нет возможности уточнить информацию по Вашему обращению/заказу/проверить наличие. Не переживайте, специалисты уже занимаются данным вопросом. Приносим вам свои извинения. Обратитесь, пожалуйста, позднее.
+            <span class="tooltip">Скопировать</span>
+        </div>
+    </div>
+</div>
+
+<div class="spoiler">
+    <div class="spoiler-header">Доставка и бонусы</div>
+    <div class="spoiler-content">
+        <div class="phrase" onclick="copyPhrase(this)">
+            В качестве компенсации в течение нескольких дней начислим на карту лояльности <span class="editable" onclick="makeEditable(event, this)">Х</span> бонусов.
+            <span class="tooltip">Скопировать</span>
+        </div>
+        <div class="phrase" onclick="copyPhrase(this)">
+            Спасибо за ожидание. Ваш заказ в статусе комплектуется, поставщик не отказал в препарате, необходимо ожидать доставку. Стандартные сроки доставки 2-3 дня, но иногда происходят задержки, так как заказ идет со склада и осуществляется поиск препарата по всем поставщикам. К сожалению, повлиять на статус доставки нет технической возможности. В качестве извинения начислим Вам на карту лояльности <span class="editable" onclick="makeEditable(event, this)">Х</span> бонусов.
+            <span class="tooltip">Скопировать</span>
+        </div>
+    </div>
+</div>
+
+<div class="spoiler">
+    <div class="spoiler-header">Авторизация и консультации</div>
+    <div class="spoiler-content">
+        <div class="phrase" onclick="copyPhrase(this)">
+            В настоящее время реализована новая авторизация через Тинькофф. Код авторизации поступает от Тинькофф. Иметь карту или предоставлять какую-либо иную информацию не нужно, сервис используется только для авторизации на сайте.
+            <span class="tooltip">Скопировать</span>
+        </div>
+        <div class="phrase" onclick="copyPhrase(this)">
+            В настоящее время мы с Вами рассмотрели все возможные варианты решения данного вопроса. Вас интересует информация по каким-либо иным вопросам? Я понимаю Ваше желание решить данный вопрос в ходе текущего диалога, тем не менее, это невозможно. К сожалению данной информацией мы не располагаем/данная тематика не входит в рамки возможных для консультаций. В настоящий момент, если у Вас нет вопросов по другим темам, я вынужден/на буду завершить диалог.
+            <span class="tooltip">Скопировать</span>
+        </div>
+    </div>
+</div>
+
+<div class="spoiler">
+    <div class="spoiler-header">Курьерская доставка</div>
+    <div class="spoiler-content">
+        <div class="phrase" onclick="copyPhrase(this)">
+            Курьерскую доставку можно только самостоятельно на сайте или в мобильном приложении, так как оплата происходит онлайн. Стоимость доставки зависит от выбранного вами адреса и времени. Для оформления доставки: добавьте все необходимые товары в корзину (товары доступные под доставку отмечены словом «Доставляем»), нажмите кнопку "оформить заказ", выберите пункт «Доставка», заполните необходимые данные, нажмите кнопку «Оформление». Далее сайт/приложение откроет страницу для онлайн-оплаты банковской картой.
+            <span class="tooltip">Скопировать</span>
+        </div>
+        <div class="phrase" onclick="copyPhrase(this)">
+            Курьерская доставка рецептурных препаратов доступна только по электронному рецепту, выписанному через ЕМИАС. По бумажному рецепту оформить доставку не получится.
+            <span class="tooltip">Скопировать</span>
+        </div>
+        <div class="phrase" onclick="copyPhrase(this)">
+            К сожалению, на Ваш заказ еще не найден курьер. Мы осуществляем поиск курьера для выполнения Вашего заказа. Когда курьер заберет заказ из аптеки, он дополнительно с вами свяжется для уточнения актуальности заказа. От лица компании приношу искренние извинения за то, что Вам приходится ожидать услугу доставки. В качестве компенсации начислим Вам 100 дополнительных бонусов на карту лояльности.
+            <span class="tooltip">Скопировать</span>
+        </div>
+        <div class="phrase" onclick="copyPhrase(this)">
+            Бонусы уже возвращены на вашу карту, вы можете списать их при следующей покупке. Информация в личном кабинете обновится в ближайшее время.
+            <span class="tooltip">Скопировать</span>
+        </div>
+    </div>
+</div>
+
+<div class="spoiler">
+    <div class="spoiler-header">Технические проблемы</div>
+    <div class="spoiler-content">
+        <div class="phrase" onclick="copyPhrase(this)">
+            В таком случае рекомендуем очистить кэш и куки браузера, после этого повторить попытку авторизации (или что там делает клиент). Инструкция: Яндекс браузер: https://browser.yandex.ru/help/personal-data-protection/cookies.html, Браузер Google Chrome: https://support.google.com/accounts/answer/32050?hl=ru&co=GENIE.Platform%3DDesktop.
+            <span class="tooltip">Скопировать</span>
+        </div>
+    </div>
+</div>
+
+<div class="spoiler">
+    <div class="spoiler-header">Рецептурные препараты</div>
+    <div class="spoiler-content">
+        <div class="phrase" onclick="copyPhrase(this)">
+            Рецептурные препараты отпускаются по рецепту врача. Фармацевт в аптеке вправе попросить предъявить рецепт, так как несет личную ответственность за отпуск данной категории лекарства. Рекомендуем заранее позаботиться о наличии рецепта. Производитель указал данный препарат как рецептурный, аптека вправе запросить у вас рецепт. Забронировать для вас?
+            <span class="tooltip">Скопировать</span>
+        </div>
+    </div>
+</div>
+
+<div class="spoiler">
+    <div class="spoiler-header">Изменение данных</div>
+    <div class="spoiler-content">
+        <div class="phrase" onclick="copyPhrase(this)">
+            Уточните, пожалуйста, ваш старый и новый номера телефонов, ваше имя, дату рождения и адрес последней покупки по карте лояльности.
+            <span class="tooltip">Скопировать</span>
+        </div>
+    </div>
+</div>
+
+<div class="spoiler">
+    <div class="spoiler-header">Бронирование</div>
+    <div class="spoiler-content">
+        <div class="phrase" onclick="copyPhrase(this)">
+            Подскажите, почему отказываетесь? Услуга абсолютно бесплатная и даёт Вам гарантию, что товар действительно будет в наличии по заданной цене.
+            <span class="tooltip">Скопировать</span>
+        </div>
+        <div class="phrase" onclick="copyPhrase(this)">
+            Так как услуга действует 5 дней - у вас будет время для поиска препарата в ближайших аптеках. В случае, если товара не окажется поблизости - сможете выкупить бронирование. Давайте забронируем?
+            <span class="tooltip">Скопировать</span>
+        </div>
+        <div class="phrase" onclick="copyPhrase(this)">
+            Если вы не найдете препарат по оптимальной цене - сможете выкупить забронированный препарат в нашей аптеке. Заказ будет храниться в течение двух дней. Воспользуетесь услугой?
+            <span class="tooltip">Скопировать</span>
+        </div>
+    </div>
+</div>
+
+<div class="spoiler">
+    <div class="spoiler-header">Цены и условия</div>
+    <div class="spoiler-content">
+        <div class="phrase" onclick="copyPhrase(this)">
+            Цена товара розничной сети зависит от множества факторов: это цена поставщика, аренда помещения. Из-за этого цена может отличаться. Часто цена на сайте и в мобильном приложении бывает ниже, чем непосредственно в аптеке. Цены на сайте и в мобильном приложении едины для всех товаров во всех аптеках при условии, что Вы делаете заказ на сайте или в мобильном приложении. При добавлении товара в корзину, Вы можете увидеть уведомление: «Цена товара действительна только при оформлении заказа на сайте».
+            <span class="tooltip">Скопировать</span>
+        </div>
+    </div>
+</div>
+
+<div class="spoiler">
+    <div class="spoiler-header">Обмен и возврат</div>
+    <div class="spoiler-content">
+        <div class="phrase" onclick="copyPhrase(this)">
+            Благодарю за ожидание. Обмен и возврат товара надлежащего качества, купленного в аптеке, невозможен. Обязательно перед оплатой проверьте еще раз название и дозировку препарата. Номер заказа: Доступно в аптеке: через 15 минут. Адрес аптеки: Товары: Итого: Заявка на бронирование составлена. В ближайшее время на указанный номер телефона поступит первое уведомление с номером заказа. Срок хранения заказа в аптеке - 5 дней с момента подтверждения заказа. Обязательно дождитесь уведомления о готовности. Оно поступит через 15 минут. Обращаю ваше внимание на то, что в заказе есть рецептурный препарат. Аптека вправе запросить рецепт.
+            <span class="tooltip">Скопировать</span>
+        </div>
+    </div>
+</div>
+
+<div class="spoiler">
+    <div class="spoiler-header">География доставки</div>
+    <div class="spoiler-content">
+        <div class="phrase" onclick="copyPhrase(this)">
+            К сожалению, интернет-аптека нашей сети доставляет заказы в аптеки только на территории следующих регионов: Москва и Московская область; Санкт-Петербург и Ленинградская область; Воронежская, Тверская, Псковская, Новгородская, Мурманская, Калининградская, Ярославская область, Республика Карелия и Сочи. В другие регионы и страны доставки нет. Можно забронировать препарат в аптеках на территории данных городов или их областей, за Вас выкупят знакомые или родственники.
+            <span class="tooltip">Скопировать</span>
+        </div>
+    </div>
+</div>
+
+<script>
+function makeEditable(event, element) {
+    event.stopPropagation();
+    const originalText = element.textContent;
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.value = originalText;
+    input.style.width = '100px';
+    
+    input.onblur = function() {
+        element.textContent = this.value || originalText;
+        element.classList.add('editable');
+        element.onclick = function(e) { makeEditable(e, this); };
+    };
+    
+    element.textContent = '';
+    element.appendChild(input);
+    input.focus();
+}
+
+function copyPhrase(element) {
+    // Клонируем содержимое элемента
+    const clone = element.cloneNode(true);
+
+    // Удаляем tooltip из копии
+    const tooltips = clone.querySelectorAll('.tooltip');
+    tooltips.forEach(t => t.remove());
+
+    // Получаем чистый текст из копии
+    const text = clone.textContent.trim();
+
+    // Копируем в буфер обмена
+    navigator.clipboard.writeText(text)
+        .then(() => {
+            console.log('Скопировано:', text);
+        })
+        .catch(err => {
+            console.error('Ошибка копирования:', err);
+        });
+}
+
+document.querySelectorAll('.spoiler-header').forEach(header => {
+    header.addEventListener('click', () => {
+        const content = header.nextElementSibling;
+        if (content.style.display === 'block') {
+            content.style.display = 'none';
+        } else {
+            content.style.display = 'block';
+        }
+    });
+});
+</script>
+
+</body>
+</html>
