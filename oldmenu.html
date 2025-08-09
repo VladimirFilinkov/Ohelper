@@ -1,379 +1,545 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Выбор города</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      display: flex;
-      min-height: 100vh;
-      font-weight: bold;
-    }
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Выбор города — Горздрав / Аптеки 36,6</title>
+<style>
+  :root{
+    --bg:#f7f9fb;
+    --card:#ffffff;
+    --muted:#6b7280;
+    --gorzdrav-50:#ecf7ee;
+    --gorzdrav-100:#e6f3e9;
+    --gorzdrav-500:#2e7d32;
+    --gorzdrav-accent:#bce6bd;
+    --apteka-50:#eef5ff;
+    --apteka-100:#e8f0fe;
+    --apteka-500:#1565c0;
+    --apteka-accent:#bbd9ff;
+    --shadow: 0 6px 18px rgba(22, 35, 61, 0.08);
+    --radius:12px;
+    --gap:14px;
+    --max-col-width:260px;
+  }
 
-    /* Основное меню слева */
-    .menu-container {
-      width: 250px;
-      padding: 0;
-    }
+  /* Page layout */
+  html,body{height:100%;margin:0;background:var(--bg);font-family:Inter, "Segoe UI", Roboto, Arial, sans-serif;color:#0f1724}
+  .wrap{display:flex;min-height:100vh;gap:0;align-items:stretch}
 
-    /* Горздрав — бледно-зелёный фон */
-    .menu-gorzdrav {
-      background-color: #e8f5e8;
-    }
+  /* Left menu (sidebar) */
+  .sidebar{
+    width:300px;
+    min-width:240px;
+    background:linear-gradient(180deg, #ffffff 0%, #fbfdfc 100%);
+    padding:20px;
+    box-shadow: var(--shadow);
+    border-right: 1px solid rgba(15,23,36,0.05);
+    box-sizing:border-box;
+  }
+  .brand{
+    display:flex;gap:12px;align-items:center;margin-bottom:10px;
+  }
+  .logo{
+    width:46px;height:46px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;
+    box-shadow:0 6px 14px rgba(20,30,50,0.08);
+  }
+  .logo.gorzdrav{background:linear-gradient(135deg,var(--gorzdrav-500),#4caf50)}
+  .logo.apteka{background:linear-gradient(135deg,var(--apteka-500),#3f7edb)}
+  .brand h1{font-size:16px;margin:0}
+  .brand p{margin:0;color:var(--muted);font-size:13px}
 
-    /* 36,6 — бледно-синий фон */
-    .menu-apteka36 {
-      background-color: #e8f0fe;
-      border-right: 1px solid #ccc;
-    }
+  .section{
+    margin-top:18px;
+    padding:12px;
+    border-radius:10px;
+  }
+  .section .title{
+    font-weight:700;font-size:13px;margin-bottom:10px;display:flex;align-items:center;gap:8px;
+  }
 
-    .menu-item {
-      padding: 12px 20px;
-      cursor: pointer;
-      transition: color 0.3s ease;
-      font-weight: bold;
-    }
+  /* Region list buttons */
+  .region-list{display:flex;flex-direction:column;gap:8px}
+  .region-btn{
+    display:flex;align-items:center;gap:10px;border:0;background:transparent;padding:10px;border-radius:8px;cursor:pointer;text-align:left;
+    transition:background .18s, transform .08s;
+    color:#0f1724;font-weight:600;
+  }
+  .region-btn:hover{background:rgba(15,23,36,0.04);transform:translateY(-1px)}
+  .region-btn.active{background:linear-gradient(90deg, rgba(0,0,0,0.02), rgba(0,0,0,0.00));box-shadow: inset 0 0 0 1px rgba(15,23,36,0.03)}
+  .region-chip{font-size:13px;color:var(--muted);margin-left:auto;padding:4px 8px;border-radius:999px;background:rgba(15,23,36,0.03)}
 
-    .menu-item.gorzdrav {
-      color: #2e7d32;
-    }
-    .menu-item.gorzdrav:hover {
-      color: #cc5500;
-    }
+  /* Right panel (cities) */
+  .panel{
+    flex:1;
+    padding:24px;
+    box-sizing:border-box;
+    display:flex;flex-direction:column;gap:16px;
+  }
+  .panel .panel-top{
+    display:flex;align-items:center;justify-content:space-between;gap:12px;
+  }
+  .panel .heading{
+    font-size:18px;font-weight:700;color:#0b1220;
+  }
+  .panel .hint{color:var(--muted);font-size:13px}
 
-    .menu-item.apteka36 {
-      color: #1565c0;
-    }
-    .menu-item.apteka36:hover {
-      color: #cc5500;
-    }
+  /* Cities block */
+  .cities{
+    background:var(--card);
+    border-radius:var(--radius);
+    padding:18px;
+    box-shadow:var(--shadow);
+    min-height:240px;
+    overflow:auto;
+  }
 
-    hr {
-      margin: 0;
-      border: none;
-      height: 1px;
-    }
-    hr.gorzdrav {
-      border-color: #81c784;
-      background-color: #81c784;
-    }
-    hr.apteka36 {
-      border-color: #64b5f6;
-      background-color: #64b5f6;
-    }
+  /* Container that will get dynamic column-count */
+  .cities-columns{
+    column-gap:28px;
+    /* column-count will be set dynamically from JS */
+  }
 
-    /* Блоки с городами справа */
-    .cities-container {
-      flex: 1;
-      padding: 20px;
-      display: none;
-      column-count: 1;
-      column-gap: 40px;
-    }
+  /* city link styles (two color schemes) */
+  .city-link{
+    display:block;
+    break-inside:avoid;
+    -webkit-column-break-inside: avoid;
+    padding:6px 0;
+    text-decoration:none;
+    font-weight:600;
+    font-size:14px;
+    border-radius:6px;
+    transition:background .12s, color .12s, transform .12s;
+    color:var(--gorzdrav-500); /* default, overwritten by class */
+  }
+  .city-link:hover{background:rgba(15,23,36,0.03);transform:translateX(4px)}
+  .city-link.gorzdrav{color:var(--gorzdrav-500)}
+  .city-link.gorzdrav:hover{background:linear-gradient(90deg, rgba(46,125,50,0.06), rgba(188,230,189,0.12))}
+  .city-link.apteka36{color:var(--apteka-500)}
+  .city-link.apteka36:hover{background:linear-gradient(90deg, rgba(21,101,192,0.06), rgba(187,217,255,0.12))}
 
-    /* Если городов больше 20 — создаём 2 или 3 колонки */
-    .cities-container.large-20plus {
-      column-count: 2;
-    }
-    .cities-container.large-40plus {
-      column-count: 3;
-    }
+  /* small meta / footer */
+  .foot{margin-top:auto;color:var(--muted);font-size:13px}
 
-    .city-link {
-      display: block;
-      margin-bottom: 8px;
-      text-decoration: none;
-      font-weight: bold;
-    }
-
-    .city-link.gorzdrav {
-      color: #2e7d32;
-    }
-    .city-link.gorzdrav:hover {
-      color: #cc5500;
-    }
-
-    .city-link.apteka36 {
-      color: #1565c0;
-    }
-    .city-link.apteka36:hover {
-      color: #cc5500;
-    }
-
-    /* Адаптивность */
-    @media (max-width: 1000px) {
-      .cities-container {
-        column-count: 1 !important;
-      }
-    }
-  </style>
+  /* Responsive: single column on small screens */
+  @media (max-width:900px){
+    .wrap{flex-direction:column}
+    .sidebar{width:100%;display:flex;flex-direction:row;padding:14px;gap:12px;overflow:auto}
+    .section{min-width:220px}
+    .panel{padding:16px}
+  }
+  @media (max-width:520px){
+    .region-btn{padding:8px;font-size:14px}
+    .cities{padding:12px}
+  }
+</style>
 </head>
 <body>
+  <div class="wrap">
+    <aside class="sidebar" aria-label="Меню регионов">
+      <div class="brand" style="margin-bottom:6px">
+        <div style="display:flex;gap:12px;align-items:center">
+        </div>
+      </div>
 
-  <!-- Меню слева: разделено на две части -->
-  <div class="menu-container">
-    <!-- Горздрав — бледно-зелёный фон -->
-    <div class="menu-gorzdrav">
-      <hr class="gorzdrav">
-      <div class="menu-item gorzdrav">ГОРЗДРАВ</div>
-      <hr class="gorzdrav">
-      <div class="menu-item gorzdrav" onmouseover="showCities('moscow')">Москва и МО</div>
-      <div class="menu-item gorzdrav" onmouseover="showCities('spb')">Санкт-Петербург и ЛО</div>
-      <div class="menu-item gorzdrav" onmouseover="showCities('kaluga')">Калужская область</div>
-      <div class="menu-item gorzdrav" onmouseover="showCities('voronezh')">Воронежская область</div>
-      <div class="menu-item gorzdrav" onmouseover="showCities('tver')">Тверская область</div>
-      <div class="menu-item gorzdrav" onmouseover="showCities('pskov')">Псковская область</div>
-      <div class="menu-item gorzdrav" onmouseover="showCities('novgorod')">Новгородская область</div>
-      <div class="menu-item gorzdrav" onmouseover="showCities('karelia')">Республика Карелия</div>
-      <div class="menu-item gorzdrav" onmouseover="showCities('murmansk')">Мурманская область</div>
-      <div class="menu-item gorzdrav" onmouseover="showCities('kaliningrad')">Калининградская область</div>
-      <div class="menu-item gorzdrav" onmouseover="showCities('yaroslavl')">Ярославская область</div>
-      <div class="menu-item gorzdrav" onmouseover="showCities('belgorod')">Белгородская область</div>
-      <hr class="gorzdrav">
-    </div>
+      <!-- Горздрав -->
+      <div class="section" id="section-gorzdrav" style="background:linear-gradient(180deg,var(--gorzdrav-100),#ffffff)">
+        <div class="title">
+          <div style="width:10px;height:10px;border-radius:3px;background:var(--gorzdrav-500)"></div>
+          <div style="font-weight:800">ГОРЗДРАВ</div>
+        </div>
+        <div class="region-list" id="gorzdrav-regions"></div>
+      </div>
 
-    <!-- Аптеки 36,6 — бледно-синий фон -->
-    <div class="menu-apteka36">
-      <div class="menu-item apteka36">АПТЕКИ 36,6</div>
-      <hr class="apteka36">
-      <div class="menu-item apteka36" onmouseover="showCities('moscow_36')">Москва и МО</div>
-      <div class="menu-item apteka36" onmouseover="showCities('spb_36')">Санкт-Петербург и ЛО</div>
-      <div class="menu-item apteka36" onmouseover="showCities('krasnodar_36')">Краснодарский край</div>
-    </div>
+      <!-- Аптеки 36,6 -->
+      <div class="section" id="section-36" style="background:linear-gradient(180deg,var(--apteka-100),#ffffff)">
+        <div class="title">
+          <div style="width:10px;height:10px;border-radius:3px;background:var(--apteka-500)"></div>
+          <div style="font-weight:800">АПТЕКИ 36,6</div>
+        </div>
+        <div class="region-list" id="apteka-regions"></div>
+      </div>
+    </aside>
+
+    <main class="panel" role="main">
+      <div class="panel-top">
+        <div>
+          <div class="heading" id="panel-heading">Выберите регион слева</div>
+          <div class="hint" id="panel-sub">Города будут отображены в столбиках по 20</div>
+        </div>
+        <div class="hint" id="count-hint"></div>
+      </div>
+
+      <div class="cities" id="cities-box" aria-live="polite">
+        <div class="cities-columns" id="cities-columns">
+          <!-- Сюда JS вставит ссылки городов -->
+        </div>
+      </div>
+
+      <div class="foot">Совет: нажми на регион в левом меню, чтобы увидеть города. Ссылки открываются в новой вкладке.</div>
+    </main>
   </div>
 
-  <!-- Блоки с городами справа -->
-  <!-- Москва: 70+ городов → 3 колонки -->
-  <div id="moscow" class="cities-container large-40plus">
-    <a href="https://new.gorzdrav.org/moskva/" target="_blank" class="city-link gorzdrav">Москва</a>
-    <a href="https://new.gorzdrav.org/aprelevka/" target="_blank" class="city-link gorzdrav">Апрелевка</a>
-    <a href="https://new.gorzdrav.org/balashikha/" target="_blank" class="city-link gorzdrav">Балашиха</a>
-    <a href="https://new.gorzdrav.org/beloozerskij/" target="_blank" class="city-link gorzdrav">Белоозёрский</a>
-    <a href="https://new.gorzdrav.org/bronnicy/" target="_blank" class="city-link gorzdrav">Бронницы</a>
-    <a href="https://new.gorzdrav.org/vidnoe/" target="_blank" class="city-link gorzdrav">Видное</a>
-    <a href="https://new.gorzdrav.org/volokolamsk/" target="_blank" class="city-link gorzdrav">Волоколамск</a>
-    <a href="https://new.gorzdrav.org/voskresensk/" target="_blank" class="city-link gorzdrav">Воскресенск</a>
-    <a href="https://new.gorzdrav.org/vysokovsk/" target="_blank" class="city-link gorzdrav">Высоковск</a>
-    <a href="https://new.gorzdrav.org/golitsyno/" target="_blank" class="city-link gorzdrav">Голицыно</a>
-    <a href="https://new.gorzdrav.org/dedenevo/" target="_blank" class="city-link gorzdrav">Деденёво</a>
-    <a href="https://new.gorzdrav.org/dzerzhinskij/" target="_blank" class="city-link gorzdrav">Дзержинский</a>
-    <a href="https://new.gorzdrav.org/dmitrov/" target="_blank" class="city-link gorzdrav">Дмитров</a>
-    <a href="https://new.gorzdrav.org/dolgoprudnyj/" target="_blank" class="city-link gorzdrav">Долгопрудный</a>
-    <a href="https://new.gorzdrav.org/domodedovo/" target="_blank" class="city-link gorzdrav">Домодедово</a>
-    <a href="https://new.gorzdrav.org/dubna/" target="_blank" class="city-link gorzdrav">Дубна</a>
-    <a href="https://new.gorzdrav.org/egorevsk/" target="_blank" class="city-link gorzdrav">Егорьевск</a>
-    <a href="https://new.gorzdrav.org/zhukovskij/" target="_blank" class="city-link gorzdrav">Жуковский</a>
-    <a href="https://new.gorzdrav.org/zaprudnya/" target="_blank" class="city-link gorzdrav">Запрудня</a>
-    <a href="https://new.gorzdrav.org/zvenigorod/" target="_blank" class="city-link gorzdrav">Звенигород</a>
-    <a href="https://new.gorzdrav.org/zelenograd/" target="_blank" class="city-link gorzdrav">Зеленоград</a>
-    <a href="https://new.gorzdrav.org/ivanteevka/" target="_blank" class="city-link gorzdrav">Ивантеевка</a>
-    <a href="https://new.gorzdrav.org/istra/" target="_blank" class="city-link gorzdrav">Истра</a>
-    <a href="https://new.gorzdrav.org/kashira/" target="_blank" class="city-link gorzdrav">Кашира</a>
-    <a href="https://new.gorzdrav.org/klin/" target="_blank" class="city-link gorzdrav">Клин</a>
-    <a href="https://new.gorzdrav.org/kolomna/" target="_blank" class="city-link gorzdrav">Коломна</a>
-    <a href="https://new.gorzdrav.org/korolev/" target="_blank" class="city-link gorzdrav">Королёв</a>
-    <a href="https://new.gorzdrav.org/kotelniki/" target="_blank" class="city-link gorzdrav">Котельники</a>
-    <a href="https://new.gorzdrav.org/kraskovo/" target="_blank" class="city-link gorzdrav">Красково</a>
-    <a href="https://new.gorzdrav.org/krasnoarmejsk/" target="_blank" class="city-link gorzdrav">Красноармейск</a>
-    <a href="https://new.gorzdrav.org/krasnogorsk/" target="_blank" class="city-link gorzdrav">Красногорск</a>
-    <a href="https://new.gorzdrav.org/krasnoznamensk/" target="_blank" class="city-link gorzdrav">Краснознаменск</a>
-    <a href="https://new.gorzdrav.org/lobnya/" target="_blank" class="city-link gorzdrav">Лобня</a>
-    <a href="https://new.gorzdrav.org/losino-petrovskij/" target="_blank" class="city-link gorzdrav">Лосино-Петровский</a>
-    <a href="https://new.gorzdrav.org/luhovici/" target="_blank" class="city-link gorzdrav">Луховицы</a>
-    <a href="https://new.gorzdrav.org/lytkarino/" target="_blank" class="city-link gorzdrav">Лыткарино</a>
-    <a href="https://new.gorzdrav.org/lyubertsi/" target="_blank" class="city-link gorzdrav">Люберцы</a>
-    <a href="https://new.gorzdrav.org/mozhaisk/" target="_blank" class="city-link gorzdrav">Можайск</a>
-    <a href="https://new.gorzdrav.org/moskovskiy/" target="_blank" class="city-link gorzdrav">Московский</a>
-    <a href="https://new.gorzdrav.org/mytishchi/" target="_blank" class="city-link gorzdrav">Мытищи</a>
-    <a href="https://new.gorzdrav.org/naro-fominsk/" target="_blank" class="city-link gorzdrav">Наро-Фоминск</a>
-    <a href="https://new.gorzdrav.org/noginsk/" target="_blank" class="city-link gorzdrav">Ногинск</a>
-    <a href="https://new.gorzdrav.org/odintsovo/" target="_blank" class="city-link gorzdrav">Одинцово</a>
-    <a href="https://new.gorzdrav.org/oktyabrskij/" target="_blank" class="city-link gorzdrav">Октябрьский</a>
-    <a href="https://new.gorzdrav.org/orekhovo-zuevo/" target="_blank" class="city-link gorzdrav">Орехово-Зуево</a>
-    <a href="https://new.gorzdrav.org/pavlovsky-posad/" target="_blank" class="city-link gorzdrav">Павловский Посад</a>
-    <a href="https://new.gorzdrav.org/peresvet/" target="_blank" class="city-link gorzdrav">Пересвет</a>
-    <a href="https://new.gorzdrav.org/podolsk/" target="_blank" class="city-link gorzdrav">Подольск</a>
-    <a href="https://new.gorzdrav.org/protvino/" target="_blank" class="city-link gorzdrav">Протвино</a>
-    <a href="https://new.gorzdrav.org/pushkino/" target="_blank" class="city-link gorzdrav">Пушкино</a>
-    <a href="https://new.gorzdrav.org/razvilkovskoe/" target="_blank" class="city-link gorzdrav">Развитковское</a>
-    <a href="https://new.gorzdrav.org/ramenskoe/" target="_blank" class="city-link gorzdrav">Раменское</a>
-    <a href="https://new.gorzdrav.org/reutov/" target="_blank" class="city-link gorzdrav">Реутов</a>
-    <a href="https://new.gorzdrav.org/roshal/" target="_blank" class="city-link gorzdrav">Рошаль</a>
-    <a href="https://new.gorzdrav.org/ruza/" target="_blank" class="city-link gorzdrav">Руза</a>
-    <a href="https://new.gorzdrav.org/semenovskoe/" target="_blank" class="city-link gorzdrav">Семёновское</a>
-    <a href="https://new.gorzdrav.org/sergiev-posad/" target="_blank" class="city-link gorzdrav">Сергиев Посад</a>
-    <a href="https://new.gorzdrav.org/serebryanye-prudij/" target="_blank" class="city-link gorzdrav">Серебряные Пруды</a>
-    <a href="https://new.gorzdrav.org/serpukhov/" target="_blank" class="city-link gorzdrav">Серпухов</a>
-    <a href="https://new.gorzdrav.org/solnechnogorsk/" target="_blank" class="city-link gorzdrav">Солнечногорск</a>
-    <a href="https://new.gorzdrav.org/stupino/" target="_blank" class="city-link gorzdrav">Ступино</a>
-    <a href="https://new.gorzdrav.org/taldom/" target="_blank" class="city-link gorzdrav">Талдом</a>
-    <a href="https://new.gorzdrav.org/tomilino/" target="_blank" class="city-link gorzdrav">Томилино</a>
-    <a href="https://new.gorzdrav.org/troitsk/" target="_blank" class="city-link gorzdrav">Троицк</a>
-    <a href="https://new.gorzdrav.org/tuchkovo/" target="_blank" class="city-link gorzdrav">Тучково</a>
-    <a href="https://new.gorzdrav.org/uvarovka/" target="_blank" class="city-link gorzdrav">Уваровка</a>
-    <a href="https://new.gorzdrav.org/fryanovo/" target="_blank" class="city-link gorzdrav">Фряново</a>
-    <a href="https://new.gorzdrav.org/himki/" target="_blank" class="city-link gorzdrav">Химки</a>
-    <a href="https://new.gorzdrav.org/chekhov/" target="_blank" class="city-link gorzdrav">Чехов</a>
-    <a href="https://new.gorzdrav.org/shatura/" target="_blank" class="city-link gorzdrav">Шатура</a>
-    <a href="https://new.gorzdrav.org/shchyolkovo/" target="_blank" class="city-link gorzdrav">Щёлково</a>
-    <a href="https://new.gorzdrav.org/shcherbinka/" target="_blank" class="city-link gorzdrav">Щербинка</a>
-    <a href="https://new.gorzdrav.org/elektrostal/" target="_blank" class="city-link gorzdrav">Электросталь</a>
-  </div>
+<script>
+/*
+  Данные: все города и ссылки, которые ты прислал.
+  Структура: networks -> regions -> array of {name, url}
+*/
 
-  <!-- Остальные города (до 20 — одна колонка) -->
-  <div id="spb" class="cities-container">
-    <a href="https://new.gorzdrav.org/spb/" target="_blank" class="city-link gorzdrav">Санкт-Петербург</a>
-    <a href="https://new.gorzdrav.org/volkhov/" target="_blank" class="city-link gorzdrav">Волхов</a>
-    <a href="https://new.gorzdrav.org/vyborg/" target="_blank" class="city-link gorzdrav">Выборг</a>
-    <a href="https://new.gorzdrav.org/gatchina/" target="_blank" class="city-link gorzdrav">Гатчина</a>
-    <a href="https://new.gorzdrav.org/kolpino/" target="_blank" class="city-link gorzdrav">Колпино</a>
-    <a href="https://new.gorzdrav.org/krasnoe-selo/" target="_blank" class="city-link gorzdrav">Красное Село</a>
-    <a href="https://new.gorzdrav.org/kronshtadt/" target="_blank" class="city-link gorzdrav">Кронштадт</a>
-    <a href="https://new.gorzdrav.org/lodeinoe-pole/" target="_blank" class="city-link gorzdrav">Лодейное Поле</a>
-    <a href="https://new.gorzdrav.org/lomonosov/" target="_blank" class="city-link gorzdrav">Ломоносов</a>
-    <a href="https://new.gorzdrav.org/petergof/" target="_blank" class="city-link gorzdrav">Петергоф</a>
-    <a href="https://new.gorzdrav.org/podporozhe/" target="_blank" class="city-link gorzdrav">Подпорожье</a>
-    <a href="https://new.gorzdrav.org/svetogorsk/" target="_blank" class="city-link gorzdrav">Светогорск</a>
-    <a href="https://new.gorzdrav.org/sestroretsk/" target="_blank" class="city-link gorzdrav">Сестрорецк</a>
-    <a href="https://new.gorzdrav.org/tikhvin/" target="_blank" class="city-link gorzdrav">Тихвин</a>
-  </div>
-
-  <div id="kaluga" class="cities-container">
-    <a href="https://new.gorzdrav.org/kaluga/" target="_blank" class="city-link gorzdrav">Калуга</a>
-    <a href="https://new.gorzdrav.org/obninsk/" target="_blank" class="city-link gorzdrav">Обнинск</a>
-  </div>
-
-  <div id="voronezh" class="cities-container">
-    <a href="https://new.gorzdrav.org/voronezh/" target="_blank" class="city-link gorzdrav">Воронеж</a>
-  </div>
-
-  <div id="tver" class="cities-container large-20plus">
-    <a href="https://new.gorzdrav.org/tver/" target="_blank" class="city-link gorzdrav">Тверь</a>
-    <a href="https://new.gorzdrav.org/bezhetsk/" target="_blank" class="city-link gorzdrav">Бежецк</a>
-    <a href="https://new.gorzdrav.org/vishnii-volochek/" target="_blank" class="city-link gorzdrav">Вышний Волочек</a>
-    <a href="https://new.gorzdrav.org/mednoe/" target="_blank" class="city-link gorzdrav">Медное</a>
-    <a href="https://new.gorzdrav.org/mokshino/" target="_blank" class="city-link gorzdrav">Мокшино</a>
-    <a href="https://new.gorzdrav.org/redkino/" target="_blank" class="city-link gorzdrav">Редкино</a>
-    <a href="https://new.gorzdrav.org/rzhev/" target="_blank" class="city-link gorzdrav">Ржев</a>
-    <a href="https://new.gorzdrav.org/selizharovo/" target="_blank" class="city-link gorzdrav">Селижарово</a>
-    <a href="https://new.gorzdrav.org/staritsa/" target="_blank" class="city-link gorzdrav">Старица</a>
-    <a href="https://new.gorzdrav.org/torzhok/" target="_blank" class="city-link gorzdrav">Торжок</a>
-    <a href="https://new.gorzdrav.org/toropets/" target="_blank" class="city-link gorzdrav">Торопец</a>
-    <a href="https://new.gorzdrav.org/udomlya/" target="_blank" class="city-link gorzdrav">Удомля</a>
-  </div>
-
-  <div id="pskov" class="cities-container large-20plus">
-    <a href="https://new.gorzdrav.org/pskov/" target="_blank" class="city-link gorzdrav">Псков</a>
-    <a href="https://new.gorzdrav.org/velikiye-luki/" target="_blank" class="city-link gorzdrav">Великие Луки</a>
-    <a href="https://new.gorzdrav.org/nevel/" target="_blank" class="city-link gorzdrav">Невель</a>
-    <a href="https://new.gorzdrav.org/novosokolniki/" target="_blank" class="city-link gorzdrav">Новосокольники</a>
-    <a href="https://new.gorzdrav.org/opochka/" target="_blank" class="city-link gorzdrav">Опочка</a>
-    <a href="https://new.gorzdrav.org/ostrov/" target="_blank" class="city-link gorzdrav">Остров</a>
-    <a href="https://new.gorzdrav.org/pechory/" target="_blank" class="city-link gorzdrav">Печоры</a>
-  </div>
-
-  <div id="novgorod" class="cities-container">
-    <a href="https://new.gorzdrav.org/velikijnovgorod/" target="_blank" class="city-link gorzdrav">Великий Новгород</a>
-    <a href="https://new.gorzdrav.org/borovichi/" target="_blank" class="city-link gorzdrav">Боровичи</a>
-    <a href="https://new.gorzdrav.org/valdai/" target="_blank" class="city-link gorzdrav">Валдай</a>
-    <a href="https://new.gorzdrav.org/kresttsi/" target="_blank" class="city-link gorzdrav">Крестцы</a>
-    <a href="https://new.gorzdrav.org/malaya-vishera/" target="_blank" class="city-link gorzdrav">Малая Вишера</a>
-    <a href="https://new.gorzdrav.org/pestovo/" target="_blank" class="city-link gorzdrav">Пестово</a>
-    <a href="https://new.gorzdrav.org/staraya-russa/" target="_blank" class="city-link gorzdrav">Старая Русса</a>
-  </div>
-
-  <div id="karelia" class="cities-container large-20plus">
-    <a href="https://new.gorzdrav.org/petrozavodsk/" target="_blank" class="city-link gorzdrav">Петрозаводск</a>
-    <a href="https://new.gorzdrav.org/kondopoga/" target="_blank" class="city-link gorzdrav">Кондопога</a>
-    <a href="https://new.gorzdrav.org/medvezhegorsk/" target="_blank" class="city-link gorzdrav">Медвежьегорск</a>
-    <a href="https://new.gorzdrav.org/pitkyaranta/" target="_blank" class="city-link gorzdrav">Питкяранта</a>
-    <a href="https://new.gorzdrav.org/segezha/" target="_blank" class="city-link gorzdrav">Сегежа</a>
-    <a href="https://new.gorzdrav.org/sortavala/" target="_blank" class="city-link gorzdrav">Сортавала</a>
-  </div>
-
-  <div id="murmansk" class="cities-container large-20plus">
-    <a href="https://new.gorzdrav.org/murmansk/" target="_blank" class="city-link gorzdrav">Мурманск</a>
-    <a href="https://new.gorzdrav.org/apatity/" target="_blank" class="city-link gorzdrav">Апатиты</a>
-    <a href="https://new.gorzdrav.org/gadzhievo/" target="_blank" class="city-link gorzdrav">Гаджиево</a>
-    <a href="https://new.gorzdrav.org/zaozersk/" target="_blank" class="city-link gorzdrav">Заозёрск</a>
-    <a href="https://new.gorzdrav.org/zapolyarnii/" target="_blank" class="city-link gorzdrav">Заполярный</a>
-    <a href="https://new.gorzdrav.org/kandalaksha/" target="_blank" class="city-link gorzdrav">Кандалакша</a>
-    <a href="https://new.gorzdrav.org/kirovsk/" target="_blank" class="city-link gorzdrav">Кировск</a>
-    <a href="https://new.gorzdrav.org/kovdor/" target="_blank" class="city-link gorzdrav">Ковдор</a>
-    <a href="https://new.gorzdrav.org/kola/" target="_blank" class="city-link gorzdrav">Кола</a>
-    <a href="https://new.gorzdrav.org/monchegorsk/" target="_blank" class="city-link gorzdrav">Мончегорск</a>
-    <a href="https://new.gorzdrav.org/olenegorsk/" target="_blank" class="city-link gorzdrav">Оленегорск</a>
-    <a href="https://new.gorzdrav.org/polyarnie-zori/" target="_blank" class="city-link gorzdrav">Полярные Зори</a>
-    <a href="https://new.gorzdrav.org/polyarnii/" target="_blank" class="city-link gorzdrav">Полярный</a>
-    <a href="https://new.gorzdrav.org/severomorsk/" target="_blank" class="city-link gorzdrav">Североморск</a>
-    <a href="https://new.gorzdrav.org/snezhnogorsk/" target="_blank" class="city-link gorzdrav">Снежногорск</a>
-  </div>
-
-  <div id="kaliningrad" class="cities-container">
-    <a href="https://new.gorzdrav.org/kaliningrad/" target="_blank" class="city-link gorzdrav">Калининград</a>
-  </div>
-
-  <div id="yaroslavl" class="cities-container">
-    <a href="https://new.gorzdrav.org/yaroslavl/" target="_blank" class="city-link gorzdrav">Ярославль</a>
-    <a href="https://new.gorzdrav.org/pereslavl-zalesskii/" target="_blank" class="city-link gorzdrav">Переславль-Залесский</a>
-  </div>
-
-  <div id="belgorod" class="cities-container">
-    <a href="https://new.gorzdrav.org/belgorod/" target="_blank" class="city-link gorzdrav">Белгород</a>
-  </div>
-
-  <!-- Аптеки 36,6 -->
-  <div id="moscow_36" class="cities-container large-20plus">
-    <a href="https://new.366.ru/moskva/" target="_blank" class="city-link apteka36">Москва</a>
-    <a href="https://new.366.ru/balashikha/" target="_blank" class="city-link apteka36">Балашиха</a>
-    <a href="https://new.366.ru/bronnicy/" target="_blank" class="city-link apteka36">Бронницы</a>
-    <a href="https://new.366.ru/vidnoe/" target="_blank" class="city-link apteka36">Видное</a>
-    <a href="https://new.366.ru/golitsyno/" target="_blank" class="city-link apteka36">Голицыно</a>
-    <a href="https://new.366.ru/dmitrov/" target="_blank" class="city-link apteka36">Дмитров</a>
-    <a href="https://new.366.ru/dolgoprudnyj/" target="_blank" class="city-link apteka36">Долгопрудный</a>
-    <a href="https://new.366.ru/domodedovo/" target="_blank" class="city-link apteka36">Домодедово</a>
-    <a href="https://new.366.ru/zvenigorod/" target="_blank" class="city-link apteka36">Звенигород</a>
-    <a href="https://new.366.ru/zelenograd/" target="_blank" class="city-link apteka36">Зеленоград</a>
-    <a href="https://new.366.ru/istra/" target="_blank" class="city-link apteka36">Истра</a>
-    <a href="https://new.366.ru/kotelniki/" target="_blank" class="city-link apteka36">Котельники</a>
-    <a href="https://new.366.ru/krasnogorsk/" target="_blank" class="city-link apteka36">Красногорск</a>
-    <a href="https://new.366.ru/lyubertsi/" target="_blank" class="city-link apteka36">Люберцы</a>
-    <a href="https://new.366.ru/mytishchi/" target="_blank" class="city-link apteka36">Мытищи</a>
-    <a href="https://new.366.ru/naro-fominsk/" target="_blank" class="city-link apteka36">Наро-Фоминск</a>
-    <a href="https://new.366.ru/odintsovo/" target="_blank" class="city-link apteka36">Одинцово</a>
-    <a href="https://new.366.ru/pokrovskoe/" target="_blank" class="city-link apteka36">Покровское</a>
-    <a href="https://new.366.ru/pushkino/" target="_blank" class="city-link apteka36">Пушкино</a>
-    <a href="https://new.366.ru/reutov/" target="_blank" class="city-link apteka36">Реутов</a>
-    <a href="https://new.366.ru/serpukhov/" target="_blank" class="city-link apteka36">Серпухов</a>
-    <a href="https://new.366.ru/solnechnogorsk/" target="_blank" class="city-link apteka36">Солнечногорск</a>
-    <a href="https://new.366.ru/stupino/" target="_blank" class="city-link apteka36">Ступино</a>
-    <a href="https://new.366.ru/himki/" target="_blank" class="city-link apteka36">Химки</a>
-    <a href="https://new.366.ru/chekhov/" target="_blank" class="city-link apteka36">Чехов</a>
-    <a href="https://new.366.ru/shcherbinka/" target="_blank" class="city-link apteka36">Щербинка</a>
-  </div>
-
-  <div id="spb_36" class="cities-container">
-    <a href="https://new.366.ru/spb/" target="_blank" class="city-link apteka36">Санкт-Петербург</a>
-  </div>
-
-  <div id="krasnodar_36" class="cities-container">
-    <a href="https://new.366.ru/sochi/" target="_blank" class="city-link apteka36">Сочи</a>
-  </div>
-
-  <script>
-    function showCities(id) {
-      document.querySelectorAll('.cities-container').forEach(el => {
-        el.style.display = 'none';
-      });
-      const element = document.getElementById(id);
-      if (element) {
-        element.style.display = 'block';
-      }
+const data = {
+  "gorzdrav": {
+    "moscow": {
+      label: "Москва и МО",
+      cities: [
+        {name:"Москва", url:"https://new.gorzdrav.org/moskva/"},
+        {name:"Апрелевка", url:"https://new.gorzdrav.org/aprelevka/"},
+        {name:"Балашиха", url:"https://new.gorzdrav.org/balashikha/"},
+        {name:"Белоозёрский", url:"https://new.gorzdrav.org/beloozerskij/"},
+        {name:"Бронницы", url:"https://new.gorzdrav.org/bronnicy/"},
+        {name:"Видное", url:"https://new.gorzdrav.org/vidnoe/"},
+        {name:"Волоколамск", url:"https://new.gorzdrav.org/volokolamsk/"},
+        {name:"Воскресенск", url:"https://new.gorzdrav.org/voskresensk/"},
+        {name:"Высоковск", url:"https://new.gorzdrav.org/vysokovsk/"},
+        {name:"Голицыно", url:"https://new.gorzdrav.org/golitsyno/"},
+        {name:"Деденёво", url:"https://new.gorzdrav.org/dedenevo/"},
+        {name:"Дзержинский", url:"https://new.gorzdrav.org/dzerzhinskij/"},
+        {name:"Дмитров", url:"https://new.gorzdrav.org/dmitrov/"},
+        {name:"Долгопрудный", url:"https://new.gorzdrav.org/dolgoprudnyj/"},
+        {name:"Домодедово", url:"https://new.gorzdrav.org/domodedovo/"},
+        {name:"Дубна", url:"https://new.gorzdrav.org/dubna/"},
+        {name:"Егорьевск", url:"https://new.gorzdrav.org/egorevsk/"},
+        {name:"Жуковский", url:"https://new.gorzdrav.org/zhukovskij/"},
+        {name:"Запрудня", url:"https://new.gorzdrav.org/zaprudnya/"},
+        {name:"Звенигород", url:"https://new.gorzdrav.org/zvenigorod/"},
+        {name:"Зеленоград", url:"https://new.gorzdrav.org/zelenograd/"},
+        {name:"Ивантеевка", url:"https://new.gorzdrav.org/ivanteevka/"},
+        {name:"Истра", url:"https://new.gorzdrav.org/istra/"},
+        {name:"Кашира", url:"https://new.gorzdrav.org/kashira/"},
+        {name:"Клин", url:"https://new.gorzdrav.org/klin/"},
+        {name:"Коломна", url:"https://new.gorzdrav.org/kolomna/"},
+        {name:"Королёв", url:"https://new.gorzdrav.org/korolev/"},
+        {name:"Котельники", url:"https://new.gorzdrav.org/kotelniki/"},
+        {name:"Красково", url:"https://new.gorzdrav.org/kraskovo/"},
+        {name:"Красноармейск", url:"https://new.gorzdrav.org/krasnoarmejsk/"},
+        {name:"Красногорск", url:"https://new.gorzdrav.org/krasnogorsk/"},
+        {name:"Краснознаменск", url:"https://new.gorzdrav.org/krasnoznamensk/"},
+        {name:"Лобня", url:"https://new.gorzdrav.org/lobnya/"},
+        {name:"Лосино-Петровский", url:"https://new.gorzdrav.org/losino-petrovskij/"},
+        {name:"Луховицы", url:"https://new.gorzdrav.org/luhovici/"},
+        {name:"Лыткарино", url:"https://new.gorzdrav.org/lytkarino/"},
+        {name:"Люберцы", url:"https://new.gorzdrav.org/lyubertsi/"},
+        {name:"Можайск", url:"https://new.gorzdrav.org/mozhaisk/"},
+        {name:"Московский", url:"https://new.gorzdrav.org/moskovskiy/"},
+        {name:"Мытищи", url:"https://new.gorzdrav.org/mytishchi/"},
+        {name:"Наро-Фоминск", url:"https://new.gorzdrav.org/naro-fominsk/"},
+        {name:"Ногинск", url:"https://new.gorzdrav.org/noginsk/"},
+        {name:"Одинцово", url:"https://new.gorzdrav.org/odintsovo/"},
+        {name:"Октябрьский", url:"https://new.gorzdrav.org/oktyabrskij/"},
+        {name:"Орехово-Зуево", url:"https://new.gorzdrav.org/orekhovo-zuevo/"},
+        {name:"Павловский Посад", url:"https://new.gorzdrav.org/pavlovsky-posad/"},
+        {name:"Пересвет", url:"https://new.gorzdrav.org/peresvet/"},
+        {name:"Подольск", url:"https://new.gorzdrav.org/podolsk/"},
+        {name:"Протвино", url:"https://new.gorzdrav.org/protvino/"},
+        {name:"Пушкино", url:"https://new.gorzdrav.org/pushkino/"},
+        {name:"Развитковское", url:"https://new.gorzdrav.org/razvilkovskoe/"},
+        {name:"Раменское", url:"https://new.gorzdrav.org/ramenskoe/"},
+        {name:"Реутов", url:"https://new.gorzdrav.org/reutov/"},
+        {name:"Рошаль", url:"https://new.gorzdrav.org/roshal/"},
+        {name:"Руза", url:"https://new.gorzdrav.org/ruza/"},
+        {name:"Семёновское", url:"https://new.gorzdrav.org/semenovskoe/"},
+        {name:"Сергиев Посад", url:"https://new.gorzdrav.org/sergiev-posad/"},
+        {name:"Серебряные Пруды", url:"https://new.gorzdrav.org/serebryanye-prudij/"},
+        {name:"Серпухов", url:"https://new.gorzdrav.org/serpukhov/"},
+        {name:"Солнечногорск", url:"https://new.gorzdrav.org/solnechnogorsk/"},
+        {name:"Ступино", url:"https://new.gorzdrav.org/stupino/"},
+        {name:"Талдом", url:"https://new.gorzdrav.org/taldom/"},
+        {name:"Томилино", url:"https://new.gorzdrav.org/tomilino/"},
+        {name:"Троицк", url:"https://new.gorzdrav.org/troitsk/"},
+        {name:"Тучково", url:"https://new.gorzdrav.org/tuchkovo/"},
+        {name:"Уваровка", url:"https://new.gorzdrav.org/uvarovka/"},
+        {name:"Фряново", url:"https://new.gorzdrav.org/fryanovo/"},
+        {name:"Химки", url:"https://new.gorzdrav.org/himki/"},
+        {name:"Чехов", url:"https://new.gorzdrav.org/chekhov/"},
+        {name:"Шатура", url:"https://new.gorzdrav.org/shatura/"},
+        {name:"Щёлково", url:"https://new.gorzdrav.org/shchyolkovo/"},
+        {name:"Щербинка", url:"https://new.gorzdrav.org/shcherbinka/"},
+        {name:"Электросталь", url:"https://new.gorzdrav.org/elektrostal/"}
+      ]
+    },
+    "spb": {
+      label: "Санкт-Петербург и ЛО",
+      cities: [
+        {name:"Санкт-Петербург", url:"https://new.gorzdrav.org/spb/"},
+        {name:"Волхов", url:"https://new.gorzdrav.org/volkhov/"},
+        {name:"Выборг", url:"https://new.gorzdrav.org/vyborg/"},
+        {name:"Гатчина", url:"https://new.gorzdrav.org/gatchina/"},
+        {name:"Колпино", url:"https://new.gorzdrav.org/kolpino/"},
+        {name:"Красное Село", url:"https://new.gorzdrav.org/krasnoe-selo/"},
+        {name:"Кронштадт", url:"https://new.gorzdrav.org/kronshtadt/"},
+        {name:"Лодейное Поле", url:"https://new.gorzdrav.org/lodeinoe-pole/"},
+        {name:"Ломоносов", url:"https://new.gorzdrav.org/lomonosov/"},
+        {name:"Петергоф", url:"https://new.gorzdrav.org/petergof/"},
+        {name:"Подпорожье", url:"https://new.gorzdrav.org/podporozhe/"},
+        {name:"Светогорск", url:"https://new.gorzdrav.org/svetogorsk/"},
+        {name:"Сестрорецк", url:"https://new.gorzdrav.org/sestroretsk/"},
+        {name:"Тихвин", url:"https://new.gorzdrav.org/tikhvin/"}
+      ]
+    },
+    "kaluga": {
+      label: "Калужская область",
+      cities:[
+        {name:"Калуга", url:"https://new.gorzdrav.org/kaluga/"},
+        {name:"Обнинск", url:"https://new.gorzdrav.org/obninsk/"}
+      ]
+    },
+    "voronezh": {
+      label: "Воронежская область",
+      cities:[
+        {name:"Воронеж", url:"https://new.gorzdrav.org/voronezh/"}
+      ]
+    },
+    "tver": {
+      label: "Тверская область",
+      cities:[
+        {name:"Тверь", url:"https://new.gorzdrav.org/tver/"},
+        {name:"Бежецк", url:"https://new.gorzdrav.org/bezhetsk/"},
+        {name:"Вышний Волочек", url:"https://new.gorzdrav.org/vishnii-volochek/"},
+        {name:"Медное", url:"https://new.gorzdrav.org/mednoe/"},
+        {name:"Мокшино", url:"https://new.gorzdrav.org/mokshino/"},
+        {name:"Редкино", url:"https://new.gorzdrav.org/redkino/"},
+        {name:"Ржев", url:"https://new.gorzdrav.org/rzhev/"},
+        {name:"Селижарово", url:"https://new.gorzdrav.org/selizharovo/"},
+        {name:"Старица", url:"https://new.gorzdrav.org/staritsa/"},
+        {name:"Торжок", url:"https://new.gorzdrav.org/torzhok/"},
+        {name:"Торопец", url:"https://new.gorzdrav.org/toropets/"},
+        {name:"Удомля", url:"https://new.gorzdrav.org/udomlya/"}
+      ]
+    },
+    "pskov": {
+      label: "Псковская область",
+      cities:[
+        {name:"Псков", url:"https://new.gorzdrav.org/pskov/"},
+        {name:"Великие Луки", url:"https://new.gorzdrav.org/velikiye-luki/"},
+        {name:"Невель", url:"https://new.gorzdrav.org/nevel/"},
+        {name:"Новосокольники", url:"https://new.gorzdrav.org/novosokolniki/"},
+        {name:"Опочка", url:"https://new.gorzdrav.org/opochka/"},
+        {name:"Остров", url:"https://new.gorzdrav.org/ostrov/"},
+        {name:"Печоры", url:"https://new.gorzdrav.org/pechory/"}
+      ]
+    },
+    "novgorod": {
+      label: "Новгородская область",
+      cities:[
+        {name:"Великий Новгород", url:"https://new.gorzdrav.org/velikijnovgorod/"},
+        {name:"Боровичи", url:"https://new.gorzdrav.org/borovichi/"},
+        {name:"Валдай", url:"https://new.gorzdrav.org/valdai/"},
+        {name:"Крестцы", url:"https://new.gorzdrav.org/kresttsi/"},
+        {name:"Малая Вишера", url:"https://new.gorzdrav.org/malaya-vishera/"},
+        {name:"Пестово", url:"https://new.gorzdrav.org/pestovo/"},
+        {name:"Старая Русса", url:"https://new.gorzdrav.org/staraya-russa/"}
+      ]
+    },
+    "karelia": {
+      label: "Республика Карелия",
+      cities:[
+        {name:"Петрозаводск", url:"https://new.gorzdrav.org/petrozavodsk/"},
+        {name:"Кондопога", url:"https://new.gorzdrav.org/kondopoga/"},
+        {name:"Медвежьегорск", url:"https://new.gorzdrav.org/medvezhegorsk/"},
+        {name:"Питкяранта", url:"https://new.gorzdrav.org/pitkyaranta/"},
+        {name:"Сегежа", url:"https://new.gorzdrav.org/segezha/"},
+        {name:"Сортавала", url:"https://new.gorzdrav.org/sortavala/"}
+      ]
+    },
+    "murmansk": {
+      label: "Мурманская область",
+      cities:[
+        {name:"Мурманск", url:"https://new.gorzdrav.org/murmansk/"},
+        {name:"Апатиты", url:"https://new.gorzdrav.org/apatity/"},
+        {name:"Гаджиево", url:"https://new.gorzdrav.org/gadzhievo/"},
+        {name:"Заозёрск", url:"https://new.gorzdrav.org/zaozersk/"},
+        {name:"Заполярный", url:"https://new.gorzdrav.org/zapolyarnii/"},
+        {name:"Кандалакша", url:"https://new.gorzdrav.org/kandalaksha/"},
+        {name:"Кировск", url:"https://new.gorzdrav.org/kirovsk/"},
+        {name:"Ковдор", url:"https://new.gorzdrav.org/kovdor/"},
+        {name:"Кола", url:"https://new.gorzdrav.org/kola/"},
+        {name:"Мончегорск", url:"https://new.gorzdrav.org/monchegorsk/"},
+        {name:"Оленегорск", url:"https://new.gorzdrav.org/olenegorsk/"},
+        {name:"Полярные Зори", url:"https://new.gorzdrav.org/polyarnie-zori/"},
+        {name:"Полярный", url:"https://new.gorzdrav.org/polyarnii/"},
+        {name:"Североморск", url:"https://new.gorzdrav.org/severomorsk/"},
+        {name:"Снежногорск", url:"https://new.gorzdrav.org/snezhnogorsk/"}
+      ]
+    },
+    "kaliningrad": {
+      label: "Калининградская область",
+      cities:[
+        {name:"Калининград", url:"https://new.gorzdrav.org/kaliningrad/"}
+      ]
+    },
+    "yaroslavl": {
+      label: "Ярославская область",
+      cities:[
+        {name:"Ярославль", url:"https://new.gorzdrav.org/yaroslavl/"},
+        {name:"Переславль-Залесский", url:"https://new.gorzdrav.org/pereslavl-zalesskii/"}
+      ]
+    },
+    "belgorod": {
+      label: "Белгородская область",
+      cities:[
+        {name:"Белгород", url:"https://new.gorzdrav.org/belgorod/"}
+      ]
     }
-  </script>
+  },
 
+  "apteka36": {
+    "moscow_36": {
+      label: "Москва и МО",
+      cities:[
+        {name:"Москва", url:"https://new.366.ru/moskva/"},
+        {name:"Балашиха", url:"https://new.366.ru/balashikha/"},
+        {name:"Бронницы", url:"https://new.366.ru/bronnicy/"},
+        {name:"Видное", url:"https://new.366.ru/vidnoe/"},
+        {name:"Голицыно", url:"https://new.366.ru/golitsyno/"},
+        {name:"Дмитров", url:"https://new.366.ru/dmitrov/"},
+        {name:"Долгопрудный", url:"https://new.366.ru/dolgoprudnyj/"},
+        {name:"Домодедово", url:"https://new.366.ru/domodedovo/"},
+        {name:"Звенигород", url:"https://new.366.ru/zvenigorod/"},
+        {name:"Зеленоград", url:"https://new.366.ru/zelenograd/"},
+        {name:"Истра", url:"https://new.366.ru/istra/"},
+        {name:"Котельники", url:"https://new.366.ru/kotelniki/"},
+        {name:"Красногорск", url:"https://new.366.ru/krasnogorsk/"},
+        {name:"Люберцы", url:"https://new.366.ru/lyubertsi/"},
+        {name:"Мытищи", url:"https://new.366.ru/mytishchi/"},
+        {name:"Наро-Фоминск", url:"https://new.366.ru/naro-fominsk/"},
+        {name:"Одинцово", url:"https://new.366.ru/odintsovo/"},
+        {name:"Покровское", url:"https://new.366.ru/pokrovskoe/"},
+        {name:"Пушкино", url:"https://new.366.ru/pushkino/"},
+        {name:"Реутов", url:"https://new.366.ru/reutov/"},
+        {name:"Серпухов", url:"https://new.366.ru/serpukhov/"},
+        {name:"Солнечногорск", url:"https://new.366.ru/solnechnogorsk/"},
+        {name:"Ступино", url:"https://new.366.ru/stupino/"},
+        {name:"Химки", url:"https://new.366.ru/himki/"},
+        {name:"Чехов", url:"https://new.366.ru/chekhov/"},
+        {name:"Щербинка", url:"https://new.366.ru/shcherbinka/"}
+      ]
+    },
+    "spb_36": {
+      label: "Санкт-Петербург и ЛО",
+      cities:[
+        {name:"Санкт-Петербург", url:"https://new.366.ru/spb/"}
+      ]
+    },
+    "krasnodar_36": {
+      label: "Краснодарский край",
+      cities:[
+        {name:"Сочи", url:"https://new.366.ru/sochi/"}
+      ]
+    }
+  }
+};
+
+/* ---- UI generation ---- */
+
+const gorzdravRegionsContainer = document.getElementById('gorzdrav-regions');
+const aptekaRegionsContainer = document.getElementById('apteka-regions');
+const citiesColumns = document.getElementById('cities-columns');
+const heading = document.getElementById('panel-heading');
+const sub = document.getElementById('panel-sub');
+const countHint = document.getElementById('count-hint');
+
+function createRegionButton(networkKey, regionKey, region) {
+  const btn = document.createElement('button');
+  btn.className = 'region-btn';
+  btn.type = 'button';
+  btn.dataset.network = networkKey;
+  btn.dataset.region = regionKey;
+  btn.innerHTML = `<span style="opacity:.95">${region.label}</span><span class="region-chip">${region.cities.length}</span>`;
+  btn.addEventListener('click', () => {
+    // deactivate siblings
+    document.querySelectorAll('.region-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    showCities(networkKey, regionKey);
+  });
+  return btn;
+}
+
+/* Render region buttons */
+Object.entries(data.gorzdrav).forEach(([rk, region]) => {
+  gorzdravRegionsContainer.appendChild(createRegionButton('gorzdrav', rk, region));
+});
+Object.entries(data.apteka36).forEach(([rk, region]) => {
+  aptekaRegionsContainer.appendChild(createRegionButton('apteka36', rk, region));
+});
+
+/* Show cities for given network+region */
+function showCities(networkKey, regionKey) {
+  const network = data[networkKey];
+  if (!network || !network[regionKey]) return;
+  const region = network[regionKey];
+  heading.textContent = (networkKey === 'gorzdrav' ? 'ГОРЗДРАВ' : 'АПТЕКИ 36,6') + ' — ' + region.label;
+  sub.textContent = `Показано ${region.cities.length} ${pluralize(region.cities.length, 'город','города','городов')}. Колонки по 20.`;
+  countHint.textContent = '';
+
+  // decide number of columns: ceil(n / 20)
+  const n = region.cities.length;
+  const cols = Math.max(1, Math.ceil(n / 20));
+  // set css column-count on the container
+  citiesColumns.style.columnCount = cols;
+  citiesColumns.innerHTML = '';
+
+  // render links in the container in order; CSS columns will fill vertically
+  region.cities.forEach(c=>{
+    const a = document.createElement('a');
+    a.className = 'city-link ' + (networkKey === 'gorzdrav' ? 'gorzdrav' : 'apteka36');
+    a.href = c.url;
+    a.target = '_blank';
+    a.rel = 'noopener noreferrer';
+    a.textContent = c.name;
+    citiesColumns.appendChild(a);
+  });
+}
+
+/* simple plural */
+function pluralize(n, one, two, five){
+  n = Math.abs(n)%100;
+  let n1 = n%10;
+  if (n>10 && n<20) return five;
+  if (n1>1 && n1<5) return two;
+  if (n1==1) return one;
+  return five;
+}
+
+/* Optional: show default region on load (Moscow for Gorzdav) */
+document.addEventListener('DOMContentLoaded', () => {
+  // try to activate default buttons if present
+  const defaultBtn = document.querySelector('.region-btn[data-network="gorzdrav"][data-region="moscow"]');
+  if(defaultBtn){
+    defaultBtn.click();
+  } else {
+    // else click first gorzdrav region
+    const first = document.querySelector('.region-btn[data-network="gorzdrav"]');
+    if(first) first.click();
+  }
+});
+
+/* Accessibility: keyboard navigation (arrow keys for region buttons) */
+(function keyboardNav(){
+  const buttons = () => Array.from(document.querySelectorAll('.region-btn'));
+  document.addEventListener('keydown', (e)=>{
+    const active = document.querySelector('.region-btn.active');
+    if(!active) return;
+    const list = buttons();
+    const idx = list.indexOf(active);
+    if(e.key === 'ArrowDown'){
+      const next = list[idx+1] || list[0];
+      next.focus(); next.click(); e.preventDefault();
+    } else if(e.key === 'ArrowUp'){
+      const prev = list[idx-1] || list[list.length-1];
+      prev.focus(); prev.click(); e.preventDefault();
+    }
+  });
+})();
+</script>
 </body>
 </html>
