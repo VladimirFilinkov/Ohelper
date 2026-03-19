@@ -1,0 +1,283 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Amnezia Cosmic</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif}
+
+body{
+    width:100vw;height:100vh;overflow:hidden;
+    display:flex;justify-content:center;align-items:center;
+    background:radial-gradient(circle at center,#050816,#000);
+    color:white;
+}
+
+/* ===== КОНТЕНТ ===== */
+.container{
+    position:relative;
+    z-index:10;
+    text-align:center;
+    display:flex;
+    flex-direction:column;
+    gap:40px;
+}
+
+h1{
+    font-size:3vw;
+    text-shadow:0 0 20px #00d4ff,0 0 40px #6a00ff;
+    animation: glow 3s ease-in-out infinite alternate;
+}
+
+@keyframes glow{
+    from{ text-shadow:0 0 10px #00d4ff }
+    to{ text-shadow:0 0 40px #6a00ff }
+}
+
+/* ===== КНОПКА ===== */
+.download-btn{
+    position:relative;
+    padding:20px 50px;
+    font-size:2vw;
+    border:none;
+    border-radius:14px;
+    background:linear-gradient(45deg,#00d4ff,#6a00ff);
+    color:white;
+    cursor:pointer;
+    overflow:hidden;
+    box-shadow:0 0 20px #00d4ff;
+    text-decoration:none;
+}
+
+.download-btn:hover{ transform:scale(1.1) }
+
+.download-btn::before{
+    content:"";
+    position:absolute;
+    width:200%;height:200%;
+    background:linear-gradient(120deg,transparent,rgba(255,255,255,0.6),transparent);
+    animation:shine 3s infinite;
+}
+
+@keyframes shine{
+    from{ transform:translateX(-100%) rotate(25deg)}
+    to{ transform:translateX(100%) rotate(25deg)}
+}
+
+/* ===== КНОПКА КОДА ===== */
+.toggle-btn{
+    padding:12px 30px;
+    font-size:1.2vw;
+    border:2px solid #00d4ff;
+    background:transparent;
+    color:#00d4ff;
+    border-radius:10px;
+    cursor:pointer;
+}
+
+/* ===== КОД ===== */
+.code-container{
+    max-height:0;
+    overflow:hidden;
+    opacity:0;
+    transition:0.5s;
+}
+
+.code-container.open{
+    max-height:300px;
+    opacity:1;
+}
+
+.code-box {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+.code-box {
+    background: #111;
+    padding: 15px;
+    border-radius: 10px;
+    font-size: 1.2vw;
+
+    word-break: break-all;
+    overflow-wrap: break-word;
+}
+
+.code-box {
+    max-width: 40vw;
+    overflow-x: auto;
+}
+.copy-btn{
+    margin-top:10px;
+    padding:10px;
+    border:none;
+    border-radius:8px;
+    background:#00d4ff;
+    cursor:pointer;
+}
+
+/* ===== TOAST ===== */
+.toast{
+    position:fixed;
+    bottom:30px;right:30px;
+    background:#00d4ff;
+    color:black;
+    padding:12px 20px;
+    border-radius:10px;
+    opacity:0;
+    transition:0.3s;
+}
+
+/* ===== ЗВЕЗДЫ (ПАРАЛЛАКС) ===== */
+.stars{position:absolute;width:100%;height:100%;pointer-events:none}
+
+.layer1::after{
+    content:"";position:absolute;width:200%;height:200%;
+    background-image:radial-gradient(1px 1px,white,transparent);
+    background-size:80px 80px;
+    animation:moveSlow 200s linear infinite;
+}
+
+.layer2::after{
+    content:"";position:absolute;width:200%;height:200%;
+    background-image:radial-gradient(2px 2px,#00d4ff,transparent);
+    background-size:120px 120px;
+    animation:moveMedium 120s linear infinite;
+}
+
+.layer3::after{
+    content:"";position:absolute;width:200%;height:200%;
+    background-image:radial-gradient(3px 3px,#6a00ff,transparent);
+    background-size:160px 160px;
+    animation:moveFast 60s linear infinite;
+}
+
+@keyframes moveSlow{from{transform:translate(0)}to{transform:translate(-500px,-500px)}}
+@keyframes moveMedium{from{transform:translate(0)}to{transform:translate(-800px,-800px)}}
+@keyframes moveFast{from{transform:translate(0)}to{transform:translate(-1200px,-1200px)}}
+
+/* ===== ПЛАНЕТЫ ===== */
+.planet{
+    position:absolute;
+    border-radius:50%;
+    animation: floatPlanet linear infinite;
+}
+
+/* маленькая (далёкая) */
+.planet.small{
+    width:40px;height:40px;
+    background:
+        radial-gradient(circle at 30% 30%, #00d4ff, #001f3f 60%, #000),
+        repeating-radial-gradient(circle, rgba(255,255,255,0.05) 0 2px, transparent 2px 6px);
+    box-shadow: inset -10px -10px 20px rgba(0,0,0,0.8);
+    filter: blur(1px);
+    opacity:0.7;
+    animation-duration:60s;
+}
+
+/* средняя */
+.planet.medium{
+    width:70px;height:70px;
+    background:
+        radial-gradient(circle at 30% 30%, #6a00ff, #140033 60%, #000),
+        repeating-radial-gradient(circle, rgba(255,255,255,0.05) 0 3px, transparent 3px 8px);
+    box-shadow: inset -15px -15px 30px rgba(0,0,0,0.8);
+    animation-duration:90s;
+}
+
+/* большая */
+.planet.large{
+    width:120px;height:120px;
+    background:
+        radial-gradient(circle at 30% 30%, #ffffff, #888 40%, #111 80%),
+        repeating-radial-gradient(circle, rgba(255,255,255,0.05) 0 2px, transparent 2px 6px);
+    box-shadow:
+        inset -20px -20px 40px rgba(0,0,0,0.8),
+        0 0 30px rgba(255,255,255,0.2);
+    animation-duration:140s;
+}
+
+/* тень */
+.planet::before{
+    content:"";
+    position:absolute;
+    width:100%;height:100%;
+    border-radius:50%;
+    background:radial-gradient(circle at 70% 70%, transparent, rgba(0,0,0,0.7));
+}
+
+/* кольца */
+.planet.large::after{
+    content:'';
+    position:absolute;
+    width:180%;
+    height:50%;
+    border-radius:50%;
+    border:2px solid rgba(255,255,255,0.2);
+    top:30%;
+    left:-40%;
+    transform:rotate(25deg);
+}
+
+/* движение */
+@keyframes floatPlanet{
+    from{ transform:translate(0,0) }
+    to{ transform:translate(100px,-200px) }
+}
+
+</style>
+</head>
+<body>
+
+<!-- звезды -->
+<div class="stars layer1"></div>
+<div class="stars layer2"></div>
+<div class="stars layer3"></div>
+
+<!-- планеты -->
+<div class="planet small" style="top:70%;left:10%"></div>
+<div class="planet medium" style="top:20%;left:80%"></div>
+<div class="planet large" style="top:60%;left:70%"></div>
+
+<!-- контент -->
+<div class="container">
+<h1>🚀 Amnezia VPN</h1>
+
+<a href="https://disk.yandex.ru/d/DH9qHLEE-LdMiA" class="download-btn">Скачать Amnezia</a>
+
+<button class="toggle-btn" onclick="toggleCode()">Показать код</button>
+
+<div class="code-container" id="codeContainer">
+<div class="code-box" id="codeText">vpn://AAAA_3icbY09C8IwFEX_Ssmsol0UN4sogovQgrqEmL7W0DaJ-ajG0v9umurm9OCe--7pECcNoHWENg2HNyPRTgGgSYRy0FQxaZjg_zAVvGAlbkHpsRH7kEiGR-CDDmlQLaOAjZNBQcaNafHd-HGphBFU1KHzLAdkPfNTlhvl_M3Dv7KoHyzW3HFODAmSwVmBG_jDpPmLZu0sWcXbWLe1XBB1Xqa7edXsi-qaHJk73E6XDPX9B4tqU4Y=</div>
+<button class="copy-btn" onclick="copyCode()">Скопировать</button>
+</div>
+</div>
+
+<div class="toast" id="toast">Код скопирован</div>
+
+<script>
+function toggleCode(){
+    const container=document.getElementById('codeContainer');
+    const button=document.querySelector('.toggle-btn');
+
+    container.classList.toggle('open');
+    button.innerText = container.classList.contains('open') ? 'Скрыть код' : 'Показать код';
+}
+
+function copyCode(){
+    const text=document.getElementById('codeText').innerText;
+    navigator.clipboard.writeText(text);
+
+    const toast=document.getElementById('toast');
+    toast.style.opacity='1';
+
+    setTimeout(()=>toast.style.opacity='0',2000);
+}
+</script>
+
+</body>
+</html>
+
